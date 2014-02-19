@@ -87,7 +87,6 @@ public final class HttpRequest implements java.io.Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
         HttpRequest that = (HttpRequest) o;
 

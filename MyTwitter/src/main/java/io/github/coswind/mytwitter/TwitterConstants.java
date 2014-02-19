@@ -10,19 +10,15 @@ public class TwitterConstants {
     public final static String CONSUMER_KEY = "QNDgnEVG5ZNGdrO2pBzfAw";
     public final static String CONSUMER_SECRET = "P0CiG5quXW9VwfynUhuDtVjfBkgCKlRtnncR0mNlVo";
 
-    public final static String HOST = "coswindtestwebapp2.appspot.com";
+    public final static String TWITTER_API_HOST = "api.twitter.com";
+    public final static String TWITTER_PROXY_API_HOST = "coswindwebapp.appspot.com";
 
     public static Configuration configuration;
 
     static {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder
-//                .setUseSSL(true)
-//                .setRestBaseURL("https://" + HOST + "/1.1/")
-//                .setOAuthRequestTokenURL("https://" + HOST + "/oauth/request_token")
-//                .setOAuthAuthenticationURL("https://" + HOST + "/oauth/authenticate")
-//                .setOAuthAuthorizationURL("https://" + HOST + "/oauth/authorize")
-//                .setOAuthAccessTokenURL("https://" + HOST + "/oauth/access_token")
+                .setUseSSL(true)
                 .setOAuthConsumerKey(CONSUMER_KEY)
                 .setOAuthConsumerSecret(CONSUMER_SECRET);
 

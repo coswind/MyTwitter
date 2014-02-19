@@ -16,6 +16,7 @@
 
 package twitter4j.internal.http;
 
+import io.github.coswind.mytwitter.TwitterConstants;
 import io.github.coswind.mytwitter.Utils.Logger;
 import twitter4j.TwitterException;
 import twitter4j.conf.ConfigurationContext;
@@ -203,10 +204,13 @@ public class HttpClientImpl extends HttpClientBase implements HttpResponseCode, 
         String authorizationHeader;
         if (req.getAuthorization() != null && (authorizationHeader = req.getAuthorization().getAuthorizationHeader(req)) != null) {
             if (Logger.isDebugEnabled()) {
-                Logger.debug("Authorization: " + z_T4JInternalStringUtil.maskString(authorizationHeader));
+                Logger.debug("Authorization: " + authorizationHeader);
             }
             connection.addRequestProperty("Authorization", authorizationHeader);
         }
+
+        connection.addRequestProperty("Host", TwitterConstants.TWITTER_PROXY_API_HOST);
+
         if (req.getRequestHeaders() != null) {
             for (String key : req.getRequestHeaders().keySet()) {
                 connection.addRequestProperty(key, req.getRequestHeaders().get(key));
@@ -217,6 +221,11 @@ public class HttpClientImpl extends HttpClientBase implements HttpResponseCode, 
 
     protected HttpURLConnection getConnection(String url) throws IOException {
         HttpURLConnection con;
+
+        Logger.d("Origin Url: " + url);
+        url = url.replace("://" + TwitterConstants.TWITTER_API_HOST, "://www.google.com");
+        Logger.d("Replace Url: " + url);
+
         if (isProxyConfigured()) {
             if (CONF.getHttpProxyUser() != null && !CONF.getHttpProxyUser().equals("")) {
                 if (Logger.isDebugEnabled()) {
