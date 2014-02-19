@@ -160,7 +160,7 @@ public class JSONTokener {
      *
      * @param c The character to match.
      * @return The character.
-     * @throws twitter4j.internal.org.json.JSONException if the character does not match.
+     * @throws JSONException if the character does not match.
      */
     public char next(char c) throws JSONException {
         char n = next();
@@ -177,7 +177,7 @@ public class JSONTokener {
      *
      * @param n The number of characters to take.
      * @return A string of n characters.
-     * @throws twitter4j.internal.org.json.JSONException Substring bounds error if there are not
+     * @throws JSONException Substring bounds error if there are not
      *                       n characters remaining in the source string.
      */
     public String next(int n) throws JSONException {
@@ -203,7 +203,7 @@ public class JSONTokener {
      * Get the next char in the string, skipping whitespace.
      *
      * @return A character, or 0 if there are no more characters.
-     * @throws twitter4j.internal.org.json.JSONException
+     * @throws JSONException
      */
     public char nextClean() throws JSONException {
         for (; ; ) {
@@ -225,7 +225,7 @@ public class JSONTokener {
      *              <code>"</code>&nbsp;<small>(double quote)</small> or
      *              <code>'</code>&nbsp;<small>(single quote)</small>.
      * @return A String.
-     * @throws twitter4j.internal.org.json.JSONException Unterminated string.
+     * @throws JSONException Unterminated string.
      */
     public String nextString(char quote) throws JSONException {
         char c;
@@ -282,7 +282,7 @@ public class JSONTokener {
      * JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
      *
      * @return An object.
-     * @throws twitter4j.internal.org.json.JSONException If syntax error.
+     * @throws JSONException If syntax error.
      */
     public Object nextValue() throws JSONException {
         char c = nextClean();

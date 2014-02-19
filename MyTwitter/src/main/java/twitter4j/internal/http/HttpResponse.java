@@ -16,8 +16,7 @@
 
 package twitter4j.internal.http;
 
-import io.github.coswind.mytwitter.LogUtils;
-import twitter4j.Logger;
+import io.github.coswind.mytwitter.Utils.Logger;
 import twitter4j.TwitterException;
 import twitter4j.conf.ConfigurationContext;
 import twitter4j.internal.org.json.JSONArray;
@@ -66,7 +65,7 @@ public abstract class HttpResponse {
      * Disconnects the internal HttpURLConnection silently.
      *
      * @return response body stream
-     * @throws twitter4j.TwitterException
+     * @throws TwitterException
      * @see #disconnect()
      */
     public InputStream asStream() {
@@ -81,7 +80,7 @@ public abstract class HttpResponse {
      * Disconnects the internal HttpURLConnection silently.
      *
      * @return response body
-     * @throws twitter4j.TwitterException
+     * @throws TwitterException
      */
     public String asString() throws TwitterException {
         if (null == responseAsString) {
@@ -99,7 +98,7 @@ public abstract class HttpResponse {
                     buf.append(line).append("\n");
                 }
                 this.responseAsString = buf.toString();
-                Logger.d(responseAsString);
+                Logger.debug(responseAsString);
                 stream.close();
                 streamConsumed = true;
             } catch (IOException ioe) {
@@ -130,7 +129,7 @@ public abstract class HttpResponse {
      * Disconnects the internal HttpURLConnection silently.
      *
      * @return response body as twitter4j.internal.org.json.JSONObject
-     * @throws twitter4j.TwitterException
+     * @throws TwitterException
      */
     public JSONObject asJSONObject() throws TwitterException {
         if (json == null) {
@@ -143,9 +142,9 @@ public abstract class HttpResponse {
                     json = new JSONObject(responseAsString);
                 }
                 if (CONF.isPrettyDebugEnabled()) {
-                    Logger.d(json.toString(1));
+                    Logger.debug(json.toString(1));
                 } else {
-                    Logger.d(responseAsString != null ? responseAsString :
+                    Logger.debug(responseAsString != null ? responseAsString :
                             json.toString());
                 }
             } catch (JSONException jsone) {
@@ -174,7 +173,7 @@ public abstract class HttpResponse {
      * Disconnects the internal HttpURLConnection silently.
      *
      * @return response body as twitter4j.internal.org.json.JSONArray
-     * @throws twitter4j.TwitterException
+     * @throws TwitterException
      */
     public JSONArray asJSONArray() throws TwitterException {
         if (jsonArray == null) {
@@ -187,9 +186,9 @@ public abstract class HttpResponse {
                     jsonArray = new JSONArray(responseAsString);
                 }
                 if (CONF.isPrettyDebugEnabled()) {
-                    Logger.d(jsonArray.toString(1));
+                    Logger.debug(jsonArray.toString(1));
                 } else {
-                    Logger.d(responseAsString != null ? responseAsString :
+                    Logger.debug(responseAsString != null ? responseAsString :
                             jsonArray.toString());
                 }
             } catch (JSONException jsone) {

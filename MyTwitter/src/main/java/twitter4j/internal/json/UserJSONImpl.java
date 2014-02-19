@@ -169,7 +169,7 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
      * @param category entities category. e.g. "description" or "url"
      * @return URLEntity array by entities/[category]/urls/url[]
      * @throws twitter4j.internal.org.json.JSONException
-     * @throws twitter4j.TwitterException
+     * @throws TwitterException
      */
     private static URLEntity[] getURLEntitiesFromJSON(JSONObject json, String category) throws JSONException, TwitterException {
         if (!json.isNull("entities")) {

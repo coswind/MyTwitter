@@ -36,8 +36,6 @@ import static twitter4j.internal.http.HttpResponseCode.SERVICE_UNAVAILABLE;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 abstract class TwitterBaseImpl implements TwitterBase, java.io.Serializable, OAuthSupport, OAuth2Support, HttpResponseListener {
-    private static final String WWW_DETAILS = "See http://twitter4j.org/en/configuration.html for details";
-
     protected Configuration conf;
     protected transient String screenName = null;
     protected transient long id = 0;
@@ -106,7 +104,7 @@ abstract class TwitterBaseImpl implements TwitterBase, java.io.Serializable, OAu
         if (null == screenName) {
             if (auth instanceof BasicAuthorization) {
                 screenName = ((BasicAuthorization) auth).getUserId();
-                if (screenName.contains("@")) {
+                if (-1 != screenName.indexOf("@")) {
                     screenName = null;
                 }
             }
@@ -211,14 +209,14 @@ abstract class TwitterBaseImpl implements TwitterBase, java.io.Serializable, OAu
     protected final void ensureAuthorizationEnabled() {
         if (!auth.isEnabled()) {
             throw new IllegalStateException(
-                    "Authentication credentials are missing. " + WWW_DETAILS);
+                    "Authentication credentials are missing. See http://twitter4j.org/en/configuration.html for the detail.");
         }
     }
 
     protected final void ensureOAuthEnabled() {
         if (!(auth instanceof OAuthAuthorization)) {
             throw new IllegalStateException(
-                    "OAuth required. Authentication credentials are missing. " + WWW_DETAILS);
+                    "OAuth required. Authentication credentials are missing. See http://twitter4j.org/en/configuration.html for the detail.");
         }
     }
 
@@ -314,7 +312,7 @@ abstract class TwitterBaseImpl implements TwitterBase, java.io.Serializable, OAu
      * In order to get access acquire AccessToken using xAuth, you must apply by sending an email to <a href="mailto:api@twitter.com">api@twitter.com</a> all other applications will receive an HTTP 401 error.  Web-based applications will not be granted access, except on a temporary basis for when they are converting from basic-authentication support to full OAuth support.<br>
      * Storage of Twitter usernames and passwords is forbidden. By using xAuth, you are required to store only access tokens and access token secrets. If the access token expires or is expunged by a user, you must ask for their login and password again before exchanging the credentials for an access token.
      *
-     * @throws twitter4j.TwitterException When Twitter service or network is unavailable, when the user has not authorized, or when the client application is not permitted to use xAuth
+     * @throws TwitterException When Twitter service or network is unavailable, when the user has not authorized, or when the client application is not permitted to use xAuth
      * @see <a href="https://dev.twitter.com/docs/oauth/xauth">xAuth | Twitter Developers</a>
      */
     @Override

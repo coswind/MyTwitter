@@ -36,7 +36,7 @@ public interface OAuthSupport {
      * Retrieves a request token
      *
      * @return generated request token.
-     * @throws twitter4j.TwitterException      when Twitter service or network is unavailable
+     * @throws TwitterException      when Twitter service or network is unavailable
      * @throws IllegalStateException access token is already available
      * @see <a href="https://dev.twitter.com/docs/auth/oauth/faq">OAuth FAQ | Twitter Developers</a>
      * @see <a href="http://oauth.net/core/1.0a/#auth_step1">OAuth Core 1.0a - 6.1.  Obtaining an Unauthorized Request Token</a>
@@ -50,7 +50,7 @@ public interface OAuthSupport {
      *
      * @param callbackURL callback URL
      * @return generated request token
-     * @throws twitter4j.TwitterException      when Twitter service or network is unavailable
+     * @throws TwitterException      when Twitter service or network is unavailable
      * @throws IllegalStateException access token is already available
      * @see <a href="https://dev.twitter.com/docs/auth/oauth/faq">OAuth FAQ | Twitter Developers</a>
      * @see <a href="http://oauth.net/core/1.0a/#auth_step1">OAuth Core 1.0a - 6.1.  Obtaining an Unauthorized Request Token</a>
@@ -65,7 +65,7 @@ public interface OAuthSupport {
      * @param callbackURL     callback URL
      * @param xAuthAccessType Overrides the access level an application requests to a users account. Supported values are read or write. This parameter is intended to allow a developer to register a read/write application but also request read only access when appropriate.
      * @return generated request token
-     * @throws twitter4j.TwitterException      when Twitter service or network is unavailable
+     * @throws TwitterException      when Twitter service or network is unavailable
      * @throws IllegalStateException access token is already available
      * @see <a href="https://dev.twitter.com/docs/auth/oauth/faq">OAuth FAQ | Twitter Developers</a>
      * @see <a href="http://oauth.net/core/1.0a/#auth_step1">OAuth Core 1.0a - 6.1.  Obtaining an Unauthorized Request Token</a>
@@ -79,7 +79,7 @@ public interface OAuthSupport {
      * If no access token is associated with this instance, this will retrieve a new access token.
      *
      * @return access token
-     * @throws twitter4j.TwitterException      when Twitter service or network is unavailable, or the user has not authorized
+     * @throws TwitterException      when Twitter service or network is unavailable, or the user has not authorized
      * @throws IllegalStateException when RequestToken has never been acquired
      * @see <a href="https://dev.twitter.com/docs/auth/oauth/faq">OAuth FAQ | dev.twitter.com - How long does an access token last?</a>
      * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a - 6.2.  Obtaining User Authorization</a>
@@ -93,7 +93,7 @@ public interface OAuthSupport {
      *
      * @param oauthVerifier OAuth verifier. AKA pin.
      * @return access token
-     * @throws twitter4j.TwitterException when Twitter service or network is unavailable, or the user has not authorized
+     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
      * @see <a href="https://dev.twitter.com/docs/auth/oauth/faq">OAuth FAQ | dev.twitter.com - How long does an access token last?</a>
      * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a - 6.2.  Obtaining User Authorization</a>
      * @see <a href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST oauth/access_token | Twitter Developers</a>
@@ -106,7 +106,7 @@ public interface OAuthSupport {
      *
      * @param requestToken the request token
      * @return access token associated with the supplied request token.
-     * @throws twitter4j.TwitterException when Twitter service or network is unavailable, or the user has not authorized
+     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
      * @see <a href="https://dev.twitter.com/docs/auth/oauth/faq">OAuth FAQ | dev.twitter.com - How long does an access token last?</a>
      * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a - 6.2.  Obtaining User Authorization</a>
      * @see <a href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST oauth/access_token | Twitter Developers</a>
@@ -120,7 +120,7 @@ public interface OAuthSupport {
      * @param requestToken  the request token
      * @param oauthVerifier OAuth verifier. AKA pin.
      * @return access token associated with the supplied request token.
-     * @throws twitter4j.TwitterException when Twitter service or network is unavailable, or the user has not authorized
+     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
      * @see <a href="http://oauth.net/core/1.0a/#auth_step2">OAuth Core 1.0a - 6.2.  Obtaining User Authorization</a>
      * @see <a href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST oauth/access_token | Twitter Developers</a>
      * @since Twitter 2.1.1
@@ -135,7 +135,7 @@ public interface OAuthSupport {
      * @param screenName the screen name
      * @param password   the password
      * @return access token associated with the supplied request token.
-     * @throws twitter4j.TwitterException when Twitter service or network is unavailable, or the user has not authorized
+     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
      * @see <a href="https://dev.twitter.com/docs/auth/oauth/faq">OAuth FAQ | dev.twitter.com - How long does an access token last?</a>
      * @see <a href="https://dev.twitter.com/docs/oauth/xauth">xAuth | Twitter Developers</a>
      * @see <a href="https://dev.twitter.com/docs/api/1.1/post/oauth/access_token">POST oauth/access_token | Twitter Developers</a>

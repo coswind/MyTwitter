@@ -22,7 +22,7 @@ import java.util.Map;
  * as a Map of formatted strings
  *
  * @author Nick Dellamaggiore (nick.dellamaggiore <at> gmail.com)
- * @see twitter4j.management.APIStatisticsOpenMBean for a dynamic version of this mbean with tabular representation
+ * @see APIStatisticsOpenMBean for a dynamic version of this mbean with tabular representation
  */
 public interface APIStatisticsMBean extends InvocationStatistics {
     public Map<String, String> getMethodLevelSummariesAsString();

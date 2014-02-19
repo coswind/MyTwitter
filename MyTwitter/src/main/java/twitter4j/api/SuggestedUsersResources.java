@@ -28,11 +28,11 @@ public interface SuggestedUsersResources {
     /**
      * Access the users in a given category of the Twitter suggested user list.<br>
      * It is recommended that end clients cache this data for no more than one hour.
-     * <br>This method calls https://api.twitter.com/1.1/users/suggestions/:slug.json
+     * <br>This method calls http://api.twitter.com/1.1/users/suggestions/:slug.json
      *
      * @param categorySlug slug
      * @return list of suggested users
-     * @throws twitter4j.TwitterException when Twitter service or network is unavailable
+     * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="https://dev.twitter.com/docs/api/1.1/get/users/suggestions/:slug">GET users/suggestions/:slug | Twitter Developers</a>
      * @since Twitter4J 2.1.1
      */
@@ -40,7 +40,7 @@ public interface SuggestedUsersResources {
 
     /**
      * Access to Twitter's suggested user list. This returns the list of suggested user categories. The category can be used in the users/suggestions/category endpoint to get the users in that category.
-     * <br>This method calls https://api.twitter.com/1.1/users/suggestions
+     * <br>This method calls http://api.twitter.com/1.1/users/suggestions
      *
      * @return list of suggested user categories.
      * @throws twitter4j.TwitterException when Twitter service or network is unavailable
@@ -52,11 +52,11 @@ public interface SuggestedUsersResources {
     /**
      * Access the users in a given category of the Twitter suggested user list and return their most recent status if they are not a protected user.
      * <br>This method has not been finalized and the interface is subject to change in incompatible ways.
-     * <br>This method calls https://api.twitter.com/1.1/users/suggestions/:slug/members.json
+     * <br>This method calls http://api.twitter.com/1.1/users/suggestions/:slug/members.json
      *
      * @param categorySlug slug
      * @return list of suggested users
-     * @throws twitter4j.TwitterException when Twitter service or network is unavailable
+     * @throws TwitterException when Twitter service or network is unavailable
      * @see <a href="https://dev.twitter.com/docs/api/1.1/get/users/suggestions/%3Aslug/members">GET users/suggestions/:slug/members | Twitter Developers</a>
      * @since Twitter4J 2.1.9
      */

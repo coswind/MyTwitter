@@ -16,7 +16,7 @@
 
 package twitter4j.internal.http;
 
-import twitter4j.Logger;
+import io.github.coswind.mytwitter.Utils.Logger;
 import twitter4j.TwitterException;
 import twitter4j.conf.ConfigurationContext;
 import twitter4j.internal.util.z_T4JInternalStringUtil;
@@ -113,7 +113,7 @@ public class HttpClientImpl extends HttpClientBase implements HttpResponseCode, 
                                     write(out, boundary + "\r\n");
                                     write(out, "Content-Disposition: form-data; name=\"" + param.getName() + "\"\r\n");
                                     write(out, "Content-Type: text/plain; charset=UTF-8\r\n\r\n");
-                                    Logger.d(param.getValue());
+                                    Logger.debug(param.getValue());
                                     out.write(param.getValue().getBytes("UTF-8"));
                                     write(out, "\r\n");
                                 }

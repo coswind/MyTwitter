@@ -601,24 +601,6 @@ class TwitterImpl extends TwitterBaseImpl implements Twitter {
                 + "&cursor=" + cursor));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PagableResponseList<User> getFollowersList(long userId, long cursor, int count) throws TwitterException {
-        return factory.createPagableUserList(get(conf.getRestBaseURL() + "followers/list.json?user_id=" + userId
-                + "&cursor=" + cursor + "&count=" + count));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PagableResponseList<User> getFollowersList(String screenName, long cursor, int count) throws TwitterException {
-        return factory.createPagableUserList(get(conf.getRestBaseURL() + "followers/list.json?screen_name=" + screenName
-                + "&cursor=" + cursor + "&count=" + count));
-    }
-
     /* Users Resources */
 
     /**
@@ -764,7 +746,7 @@ class TwitterImpl extends TwitterBaseImpl implements Twitter {
      * Check the existence, and the type of the specified file.
      *
      * @param image image to be uploaded
-     * @throws twitter4j.TwitterException when the specified file is not found (FileNotFoundException will be nested)
+     * @throws TwitterException when the specified file is not found (FileNotFoundException will be nested)
      *                          , or when the specified file object is not representing a file(IOException will be nested).
      */
     private void checkFileValidity(File image) throws TwitterException {
@@ -1138,16 +1120,6 @@ class TwitterImpl extends TwitterBaseImpl implements Twitter {
      * {@inheritDoc}
      */
     @Override
-    public UserList destroyUserListMember(int listId, String screenName) throws TwitterException {
-      return factory.createAUserList(post(conf.getRestBaseURL() +
-          "lists/members/destroy.json", new HttpParameter[]{new HttpParameter("list_id", listId), 
-        new HttpParameter("screen_name", screenName)}));
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public UserList destroyUserListMember(String ownerScreenName, String slug,
                                           long userId) throws TwitterException {
         return factory.createAUserList(post(conf.getRestBaseURL() +
@@ -1160,48 +1132,6 @@ class TwitterImpl extends TwitterBaseImpl implements Twitter {
         return destroyUserListMember(ownerId, slug, userId);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public UserList destroyUserListMembers(int listId, String[] screenNames) throws TwitterException {
-      return factory.createAUserList(post(conf.getRestBaseURL() +
-          "lists/members/destroy_all.json", new HttpParameter[]{new HttpParameter("list_id", listId), 
-        new HttpParameter("screen_name",  z_T4JInternalStringUtil.join(screenNames))}));
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public UserList destroyUserListMembers(int listId, long[] userIds) throws TwitterException {
-      return factory.createAUserList(post(conf.getRestBaseURL() +
-          "lists/members/destroy_all.json", new HttpParameter[]{new HttpParameter("list_id", listId), 
-        new HttpParameter("user_id", z_T4JInternalStringUtil.join(userIds))}));
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public UserList destroyUserListMembers(String ownerScreenName, String slug, String[] screenNames) throws TwitterException {
-      return factory.createAUserList(post(conf.getRestBaseURL() +
-          "lists/members/destroy_all.json", new HttpParameter[]{new HttpParameter("owner_screen_name", ownerScreenName),
-        new HttpParameter("slug", slug),
-        new HttpParameter("screen_name",  z_T4JInternalStringUtil.join(screenNames))}));
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public UserList destroyUserListMembers(String ownerScreenName, String slug, long[] userIds) throws TwitterException {
-      return factory.createAUserList(post(conf.getRestBaseURL() +
-          "lists/members/destroy_all.json", new HttpParameter[]{new HttpParameter("owner_screen_name", ownerScreenName),
-        new HttpParameter("slug", slug),
-        new HttpParameter("user_id", z_T4JInternalStringUtil.join(userIds))}));
-    }
-    
     /**
      * {@inheritDoc}
      */

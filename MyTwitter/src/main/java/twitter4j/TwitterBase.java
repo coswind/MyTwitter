@@ -32,7 +32,7 @@ public interface TwitterBase {
      * Note that this method returns a transiently cached (will be lost upon serialization) screen name while it is possible to change a user's screen name.<br>
      *
      * @return the authenticating screen name
-     * @throws twitter4j.TwitterException      when verifyCredentials threw an exception.
+     * @throws TwitterException      when verifyCredentials threw an exception.
      * @throws IllegalStateException if no credentials are supplied. i.e.) this is an anonymous Twitter instance
      * @since Twitter4J 2.1.1
      */
@@ -45,7 +45,7 @@ public interface TwitterBase {
      * - this instance is authenticated by OAuth.<br>
      *
      * @return the authenticating user's id
-     * @throws twitter4j.TwitterException      when verifyCredentials threw an exception.
+     * @throws TwitterException      when verifyCredentials threw an exception.
      * @throws IllegalStateException if no credentials are supplied. i.e.) this is an anonymous Twitter instance
      * @since Twitter4J 2.1.1
      */

@@ -16,7 +16,7 @@
 
 package twitter4j.json;
 
-import twitter4j.Logger;
+import io.github.coswind.mytwitter.Utils.Logger;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 

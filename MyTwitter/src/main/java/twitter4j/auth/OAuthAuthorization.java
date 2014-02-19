@@ -16,7 +16,7 @@
 
 package twitter4j.auth;
 
-import twitter4j.Logger;
+import io.github.coswind.mytwitter.Utils.Logger;
 import twitter4j.TwitterException;
 import twitter4j.conf.Configuration;
 import twitter4j.internal.http.BASE64Encoder;

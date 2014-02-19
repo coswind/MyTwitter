@@ -139,7 +139,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return Status
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Status createStatus(String rawJSON) throws TwitterException {
@@ -162,7 +162,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return User
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static User createUser(String rawJSON) throws TwitterException {
@@ -185,7 +185,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return AccountTotals
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.9
      */
     public static AccountTotals createAccountTotals(String rawJSON) throws TwitterException {
@@ -208,7 +208,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return Relationship
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Relationship createRelationship(String rawJSON) throws TwitterException {
@@ -231,7 +231,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return Place
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Place createPlace(String rawJSON) throws TwitterException {
@@ -254,7 +254,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return SavedSearch
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static SavedSearch createSavedSearch(String rawJSON) throws TwitterException {
@@ -277,7 +277,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return Trend
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Trend createTrend(String rawJSON) throws TwitterException {
@@ -300,7 +300,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return Trends
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Trends createTrends(String rawJSON) throws TwitterException {
@@ -320,7 +320,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return IDs
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static IDs createIDs(String rawJSON) throws TwitterException {
@@ -340,7 +340,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return RateLimitStatus
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Map<String, RateLimitStatus> createRateLimitStatus(String rawJSON) throws TwitterException {
@@ -363,7 +363,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return Category
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Category createCategory(String rawJSON) throws TwitterException {
@@ -386,7 +386,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return DirectMessage
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static DirectMessage createDirectMessage(String rawJSON) throws TwitterException {
@@ -409,7 +409,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return Location
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static Location createLocation(String rawJSON) throws TwitterException {
@@ -432,7 +432,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return UserList
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.7
      */
     public static UserList createUserList(String rawJSON) throws TwitterException {
@@ -455,7 +455,7 @@ public final class DataObjectFactory {
      *
      * @param rawJSON raw JSON form as String
      * @return OEmbed
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 3.0.2
      */
     public static OEmbed createOEmbed(String rawJSON) throws TwitterException {
@@ -489,7 +489,7 @@ public final class DataObjectFactory {
      * @param rawJSON raw JSON form as String
      * @return the respective constructed object, or the JSONObject in the
      *         case where we cannot determine the object type.
-     * @throws twitter4j.TwitterException when provided string is not a valid JSON string.
+     * @throws TwitterException when provided string is not a valid JSON string.
      * @since Twitter4J 2.1.9
      */
     public static Object createObject(String rawJSON) throws TwitterException {

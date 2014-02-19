@@ -15,7 +15,7 @@
  */
 package twitter4j.internal.async;
 
-import twitter4j.Logger;
+import io.github.coswind.mytwitter.Utils.Logger;
 import twitter4j.conf.Configuration;
 
 import java.util.LinkedList;
@@ -114,7 +114,7 @@ class ExecuteThread extends Thread {
                 try {
                     task.run();
                 } catch (Exception ex) {
-                    Logger.e("Got an exception while running a task: " + ex);
+                    Logger.e("Got an exception while running a task:" + ex);
                 }
             }
         }

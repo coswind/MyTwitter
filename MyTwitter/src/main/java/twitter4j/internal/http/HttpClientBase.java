@@ -1,11 +1,10 @@
 package twitter4j.internal.http;
 
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
-import twitter4j.Logger;
+import io.github.coswind.mytwitter.Utils.Logger;
 
 public abstract class HttpClientBase implements HttpClient, Serializable {
     private static final long serialVersionUID = 6944924907755685265L;
@@ -25,7 +24,7 @@ public abstract class HttpClientBase implements HttpClient, Serializable {
 
     public void write(DataOutputStream out, String outStr) throws IOException {
         out.writeBytes(outStr);
-        Logger.d(outStr);
+        Logger.debug(outStr);
     }
 
     @Override

@@ -7,16 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -38,9 +32,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import io.github.coswind.mytwitter.LogUtils;
 import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.TwitterConstants;
+import io.github.coswind.mytwitter.Utils.LogUtils;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -88,7 +82,7 @@ public class MainFragment extends Fragment {
     private void testHttpClient() {
         URI uri;
         try {
-            uri = new URI("https://coswindptapi.appspot.com");
+            uri = new URI("https://coswindtestwebapp2.appspot.com");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -96,7 +90,7 @@ public class MainFragment extends Fragment {
 
         org.apache.http.client.HttpClient client = new DefaultHttpClient();
 
-        HttpRequestBase commonRequest = new HttpGet("https://www.google.com");
+        HttpRequestBase commonRequest = new HttpPost("https://www.google.com");
         LogUtils.d("host: " + uri.getAuthority());
         commonRequest.addHeader("Host", uri.getAuthority());
 
@@ -119,6 +113,7 @@ public class MainFragment extends Fragment {
                     LogUtils.d("requestToken: " + requestToken);
                     LogUtils.d("getAuthorizationURL: " + requestToken.getAuthorizationURL());
                     String authenticity_token = getAuthenticityToken(requestToken);
+                    LogUtils.d("authenticity_token: " + authenticity_token);
                     String oauth_verifier = getOauthVerifier(requestToken, authenticity_token);
                     AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
                     LogUtils.d("accessToken: " + accessToken);

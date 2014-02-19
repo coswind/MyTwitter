@@ -153,8 +153,8 @@ public class JSONObject {
      *
      * @param jo    A JSONObject.
      * @param names An array of strings.
-     * @throws twitter4j.internal.org.json.JSONException
-     * @throws twitter4j.internal.org.json.JSONException If a value is a non-finite number or if a name is duplicated.
+     * @throws JSONException
+     * @throws JSONException If a value is a non-finite number or if a name is duplicated.
      */
     public JSONObject(JSONObject jo, String[] names) {
         this();
@@ -171,7 +171,7 @@ public class JSONObject {
      * Construct a JSONObject from a JSONTokener.
      *
      * @param x A JSONTokener object containing the source string.
-     * @throws twitter4j.internal.org.json.JSONException If there is a syntax error in the source string
+     * @throws JSONException If there is a syntax error in the source string
      *                       or a duplicated key.
      */
     public JSONObject(JSONTokener x) throws JSONException {
@@ -230,7 +230,7 @@ public class JSONObject {
      *
      * @param map A map object that can be used to initialize the contents of
      *            the JSONObject.
-     * @throws twitter4j.internal.org.json.JSONException
+     * @throws JSONException
      */
     public JSONObject(Map map) {
         this.map = new HashMap();
@@ -304,7 +304,7 @@ public class JSONObject {
      * @param source A string beginning
      *               with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *               with <code>}</code>&nbsp;<small>(right brace)</small>.
-     * @throws twitter4j.internal.org.json.JSONException If there is a syntax error in the source
+     * @throws JSONException If there is a syntax error in the source
      *                       string or a duplicated key.
      */
     public JSONObject(String source) throws JSONException {
@@ -317,7 +317,7 @@ public class JSONObject {
      *
      * @param baseName The ResourceBundle base name.
      * @param locale   The Locale to load the ResourceBundle for.
-     * @throws twitter4j.internal.org.json.JSONException If any JSONExceptions are detected.
+     * @throws JSONException If any JSONExceptions are detected.
      */
     public JSONObject(String baseName, Locale locale) throws JSONException {
         this();
@@ -362,7 +362,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value An object to be accumulated under the key.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException If the key is null or if the current value
+     * @throws JSONException If the key is null or if the current value
      *                       associated with the key is not a JSONArray.
      */
     public JSONObject append(String key, Object value) throws JSONException {
@@ -384,7 +384,7 @@ public class JSONObject {
      *
      * @param key A key string.
      * @return The object associated with the key.
-     * @throws twitter4j.internal.org.json.JSONException if the key is not found.
+     * @throws JSONException if the key is not found.
      */
     public Object get(String key) throws JSONException {
         if (key == null) {
@@ -404,7 +404,7 @@ public class JSONObject {
      *
      * @param key A key string.
      * @return The truth.
-     * @throws twitter4j.internal.org.json.JSONException if the value is not a Boolean or the String "true" or "false".
+     * @throws JSONException if the value is not a Boolean or the String "true" or "false".
      */
     public boolean getBoolean(String key) throws JSONException {
         Object object = get(key);
@@ -426,7 +426,7 @@ public class JSONObject {
      *
      * @param key A key string.
      * @return The integer value.
-     * @throws twitter4j.internal.org.json.JSONException if the key is not found or if the value cannot
+     * @throws JSONException if the key is not found or if the value cannot
      *                       be converted to an integer.
      */
     public int getInt(String key) throws JSONException {
@@ -447,7 +447,7 @@ public class JSONObject {
      *
      * @param key A key string.
      * @return A JSONArray which is the value.
-     * @throws twitter4j.internal.org.json.JSONException if the key is not found or
+     * @throws JSONException if the key is not found or
      *                       if the value is not a JSONArray.
      */
     public JSONArray getJSONArray(String key) throws JSONException {
@@ -465,7 +465,7 @@ public class JSONObject {
      *
      * @param key A key string.
      * @return A JSONObject which is the value.
-     * @throws twitter4j.internal.org.json.JSONException if the key is not found or
+     * @throws JSONException if the key is not found or
      *                       if the value is not a JSONObject.
      */
     public JSONObject getJSONObject(String key) throws JSONException {
@@ -483,7 +483,7 @@ public class JSONObject {
      *
      * @param key A key string.
      * @return The long value.
-     * @throws twitter4j.internal.org.json.JSONException if the key is not found or if the value cannot
+     * @throws JSONException if the key is not found or if the value cannot
      *                       be converted to a long.
      */
     public long getLong(String key) throws JSONException {
@@ -503,7 +503,7 @@ public class JSONObject {
      *
      * @param key A key string.
      * @return A string which is the value.
-     * @throws twitter4j.internal.org.json.JSONException if the key is not found.
+     * @throws JSONException if the key is not found.
      */
     public String getString(String key) throws JSONException {
         Object object = get(key);
@@ -575,7 +575,7 @@ public class JSONObject {
      *
      * @param number A Number
      * @return A String.
-     * @throws twitter4j.internal.org.json.JSONException If n is a non-finite number.
+     * @throws JSONException If n is a non-finite number.
      */
     public static String numberToString(Number number)
             throws JSONException {
@@ -664,7 +664,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value A boolean which is the value.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException If the key is null.
+     * @throws JSONException If the key is null.
      */
     public JSONObject put(String key, boolean value) throws JSONException {
         put(key, value ? Boolean.TRUE : Boolean.FALSE);
@@ -679,7 +679,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value A Collection value.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException
+     * @throws JSONException
      */
     public JSONObject put(String key, Collection value) throws JSONException {
         put(key, new JSONArray(value));
@@ -693,7 +693,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value A double which is the value.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException If the key is null or if the number is invalid.
+     * @throws JSONException If the key is null or if the number is invalid.
      */
     public JSONObject put(String key, double value) throws JSONException {
         put(key, new Double(value));
@@ -707,7 +707,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value An int which is the value.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException If the key is null.
+     * @throws JSONException If the key is null.
      */
     public JSONObject put(String key, int value) throws JSONException {
         put(key, new Integer(value));
@@ -721,7 +721,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value A long which is the value.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException If the key is null.
+     * @throws JSONException If the key is null.
      */
     public JSONObject put(String key, long value) throws JSONException {
         put(key, new Long(value));
@@ -736,7 +736,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value A Map value.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException
+     * @throws JSONException
      */
     public JSONObject put(String key, Map value) throws JSONException {
         put(key, new JSONObject(value));
@@ -753,7 +753,7 @@ public class JSONObject {
      *              types: Boolean, Double, Integer, JSONArray, JSONObject, Long, String,
      *              or the JSONObject.NULL object.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException If the value is non-finite number
+     * @throws JSONException If the value is non-finite number
      *                       or if the key is null.
      */
     public JSONObject put(String key, Object value) throws JSONException {
@@ -778,7 +778,7 @@ public class JSONObject {
      * @param key
      * @param value
      * @return his.
-     * @throws twitter4j.internal.org.json.JSONException if the key is a duplicate
+     * @throws JSONException if the key is a duplicate
      */
     public JSONObject putOnce(String key, Object value) throws JSONException {
         if (key != null && value != null) {
@@ -800,7 +800,7 @@ public class JSONObject {
      *              types: Boolean, Double, Integer, JSONArray, JSONObject, Long, String,
      *              or the JSONObject.NULL object.
      * @return this.
-     * @throws twitter4j.internal.org.json.JSONException If the value is a non-finite number.
+     * @throws JSONException If the value is a non-finite number.
      */
     public JSONObject putOpt(String key, Object value) throws JSONException {
         if (key != null && value != null) {
@@ -959,7 +959,7 @@ public class JSONObject {
      * Throw an exception if the object is a NaN or infinite number.
      *
      * @param o The object to test.
-     * @throws twitter4j.internal.org.json.JSONException If o is a non-finite number.
+     * @throws JSONException If o is a non-finite number.
      */
     public static void testValidity(Object o) throws JSONException {
         if (o != null) {
@@ -1022,7 +1022,7 @@ public class JSONObject {
      *         representation of the object, beginning
      *         with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *         with <code>}</code>&nbsp;<small>(right brace)</small>.
-     * @throws twitter4j.internal.org.json.JSONException If the object contains an invalid number.
+     * @throws JSONException If the object contains an invalid number.
      */
     public String toString(int indentFactor) throws JSONException {
         return toString(indentFactor, 0);
@@ -1041,7 +1041,7 @@ public class JSONObject {
      *         representation of the object, beginning
      *         with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *         with <code>}</code>&nbsp;<small>(right brace)</small>.
-     * @throws twitter4j.internal.org.json.JSONException If the object contains an invalid number.
+     * @throws JSONException If the object contains an invalid number.
      */
     String toString(int indentFactor, int indent) throws JSONException {
         int i;
@@ -1107,7 +1107,7 @@ public class JSONObject {
      *         representation of the object, beginning
      *         with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *         with <code>}</code>&nbsp;<small>(right brace)</small>.
-     * @throws twitter4j.internal.org.json.JSONException If the value is or contains an invalid number.
+     * @throws JSONException If the value is or contains an invalid number.
      */
     public static String valueToString(Object value) throws JSONException {
         if (value == null || value.equals(null)) {
@@ -1146,7 +1146,7 @@ public class JSONObject {
      *         representation of the object, beginning
      *         with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *         with <code>}</code>&nbsp;<small>(right brace)</small>.
-     * @throws twitter4j.internal.org.json.JSONException If the object contains an invalid number.
+     * @throws JSONException If the object contains an invalid number.
      */
     static String valueToString(Object value, int indentFactor, int indent)
             throws JSONException {
@@ -1235,7 +1235,7 @@ public class JSONObject {
      * Warning: This method assumes that the data structure is acyclical.
      *
      * @return The writer.
-     * @throws twitter4j.internal.org.json.JSONException
+     * @throws JSONException
      */
     public Writer write(Writer writer) throws JSONException {
         try {

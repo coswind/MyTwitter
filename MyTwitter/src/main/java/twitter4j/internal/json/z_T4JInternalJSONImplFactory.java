@@ -79,7 +79,7 @@ public class z_T4JInternalJSONImplFactory implements z_T4JInternalFactory {
      *
      * @param json JSONObject to be parsed
      * @return GeoLocation instance
-     * @throws twitter4j.TwitterException when coordinates is not included in geo element (should be an API side issue)
+     * @throws TwitterException when coordinates is not included in geo element (should be an API side issue)
      */
     /*package*/
     static GeoLocation createGeoLocation(JSONObject json) throws TwitterException {
