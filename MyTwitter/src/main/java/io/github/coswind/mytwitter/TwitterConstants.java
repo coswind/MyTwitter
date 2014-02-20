@@ -15,6 +15,8 @@ public class TwitterConstants {
     public final static String TWITTER_API_HOST = "api.twitter.com";
     public final static String TWITTER_PROXY_API_HOST = "coswindwebapp.appspot.com";
 
+    public final static String DIRECT_SIGN_IN_URL = "https://api.twitter.com/sign_in";
+
     public static Configuration configuration;
 
     static {

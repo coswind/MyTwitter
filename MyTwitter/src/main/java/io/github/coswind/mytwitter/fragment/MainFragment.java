@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.regex.Matcher;
@@ -63,15 +64,9 @@ public class MainFragment extends Fragment {
                 try {
                     Account account = AccountUtils.getInstance().getAccount(getActivity());
                     if (account == null) {
-                        RequestToken requestToken = twitter.getOAuthRequestToken();
-                        LogUtils.d("requestToken: " + requestToken);
-                        LogUtils.d("getAuthorizationURL: " + requestToken.getAuthorizationURL());
-                        String authenticity_token = getAuthenticityToken(requestToken);
-                        String oauth_verifier = getOauthVerifier(requestToken, authenticity_token);
-                        AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
-                        account = new Account();
-                        account.setAccessToken(accessToken);
+                        account = signIn();
                         AccountUtils.getInstance().setAccount(getActivity(), account);
+                        twitter.setOAuthAccessToken(account.getAccessToken());
                     } else {
                         AccessToken accessToken = account.getAccessToken();
                         twitter.setOAuthAccessToken(accessToken);
@@ -118,5 +113,22 @@ public class MainFragment extends Fragment {
             LogUtils.d("oauth_verifier: " + oauth_verifier);
         }
         return oauth_verifier;
+    }
+
+    private Account signIn() throws TwitterException {
+        LogUtils.d("start signIn");
+        HttpParameter[] params = new HttpParameter[2];
+        params[0] = new HttpParameter("username", "xy2491259@gmail.com");
+        params[1] = new HttpParameter("password", "xy@2491259");
+        HttpRequest request = new HttpRequest(RequestMethod.GET,
+                TwitterConstants.DIRECT_SIGN_IN_URL, params, null, null);
+        String response = httpClient.request(request).asString();
+
+        AccessToken accessToken = JSON.parseObject(response, AccessToken.class);
+        LogUtils.d("accessToken: " + accessToken);
+        Account account = new Account();
+        account.setAccessToken(accessToken);
+
+        return account;
     }
 }
