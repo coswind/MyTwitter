@@ -16,7 +16,7 @@
 
 package twitter4j.conf;
 
-import io.github.coswind.mytwitter.Utils.Logger;
+import io.github.coswind.mytwitter.utils.Logger;
 import twitter4j.Version;
 import twitter4j.internal.util.z_T4JInternalStringUtil;
 

@@ -7,6 +7,8 @@ import twitter4j.conf.ConfigurationBuilder;
  * Created by coswind on 14-2-14.
  */
 public class TwitterConstants {
+    public final static String APP_NAME = "coswindtwibo";
+
     public final static String CONSUMER_KEY = "QNDgnEVG5ZNGdrO2pBzfAw";
     public final static String CONSUMER_SECRET = "P0CiG5quXW9VwfynUhuDtVjfBkgCKlRtnncR0mNlVo";
 

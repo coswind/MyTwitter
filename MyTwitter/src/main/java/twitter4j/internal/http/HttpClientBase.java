@@ -4,7 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
-import io.github.coswind.mytwitter.Utils.Logger;
+import io.github.coswind.mytwitter.utils.Logger;
 
 public abstract class HttpClientBase implements HttpClient, Serializable {
     private static final long serialVersionUID = 6944924907755685265L;

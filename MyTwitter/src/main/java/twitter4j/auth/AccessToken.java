@@ -30,6 +30,8 @@ public class AccessToken extends OAuthToken implements java.io.Serializable {
     private String screenName;
     private long userId = -1L;
 
+    public AccessToken() {}
+
     AccessToken(HttpResponse res) throws TwitterException {
         this(res.asString());
     }
@@ -61,6 +63,14 @@ public class AccessToken extends OAuthToken implements java.io.Serializable {
         this.userId = userId;
     }
 
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     /**
      * @return screen name
      * @since Twitter4J 2.0.4
@@ -82,7 +92,6 @@ public class AccessToken extends OAuthToken implements java.io.Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
         AccessToken that = (AccessToken) o;

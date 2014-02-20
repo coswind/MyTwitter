@@ -6,26 +6,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+import com.alibaba.fastjson.JSONObject;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.TwitterConstants;
-import io.github.coswind.mytwitter.Utils.LogUtils;
+import io.github.coswind.mytwitter.model.Account;
+import io.github.coswind.mytwitter.utils.AccountUtils;
+import io.github.coswind.mytwitter.utils.LogUtils;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.internal.http.HttpClient;
@@ -65,14 +61,22 @@ public class MainFragment extends Fragment {
             public void run() {
                 LogUtils.d("start");
                 try {
-                    RequestToken requestToken = twitter.getOAuthRequestToken();
-                    LogUtils.d("requestToken: " + requestToken);
-                    LogUtils.d("getAuthorizationURL: " + requestToken.getAuthorizationURL());
-                    String authenticity_token = getAuthenticityToken(requestToken);
-                    LogUtils.d("authenticity_token: " + authenticity_token);
-                    String oauth_verifier = getOauthVerifier(requestToken, authenticity_token);
-                    AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
-                    LogUtils.d("accessToken: " + accessToken);
+                    Account account = AccountUtils.getInstance().getAccount(getActivity());
+                    if (account == null) {
+                        RequestToken requestToken = twitter.getOAuthRequestToken();
+                        LogUtils.d("requestToken: " + requestToken);
+                        LogUtils.d("getAuthorizationURL: " + requestToken.getAuthorizationURL());
+                        String authenticity_token = getAuthenticityToken(requestToken);
+                        String oauth_verifier = getOauthVerifier(requestToken, authenticity_token);
+                        AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, oauth_verifier);
+                        account = new Account();
+                        account.setAccessToken(accessToken);
+                        AccountUtils.getInstance().setAccount(getActivity(), account);
+                    } else {
+                        AccessToken accessToken = account.getAccessToken();
+                        twitter.setOAuthAccessToken(accessToken);
+                    }
+                    LogUtils.d("start get home time line.");
                     ResponseList<Status> statuses = twitter.getHomeTimeline();
                     for (Status status : statuses) {
                         LogUtils.d("status: " + status.getText());

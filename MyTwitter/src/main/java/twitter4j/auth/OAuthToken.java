@@ -31,6 +31,8 @@ abstract class OAuthToken implements java.io.Serializable {
     private transient SecretKeySpec secretKeySpec;
     String[] responseStr = null;
 
+    public OAuthToken() {}
+
     public OAuthToken(String token, String tokenSecret) {
         this.token = token;
         this.tokenSecret = tokenSecret;
@@ -44,6 +46,14 @@ abstract class OAuthToken implements java.io.Serializable {
         responseStr = z_T4JInternalStringUtil.split(string, "&");
         tokenSecret = getParameter("oauth_token_secret");
         token = getParameter("oauth_token");
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setTokenSecret(String tokenSecret) {
+        this.tokenSecret = tokenSecret;
     }
 
     public String getToken() {

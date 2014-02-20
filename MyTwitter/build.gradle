@@ -34,5 +34,5 @@ android {
 }
 
 dependencies {
-    compile 'org.apache.httpcomponents:httpclient:4.3.2'
+    compile 'com.alibaba:fastjson:1.1.36'
 }

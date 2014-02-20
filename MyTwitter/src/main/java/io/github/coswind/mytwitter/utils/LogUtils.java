@@ -1,14 +1,10 @@
-package io.github.coswind.mytwitter.Utils;
+package io.github.coswind.mytwitter.utils;
 
 import android.util.Log;
 
-public class Logger {
+public class LogUtils {
 	private static final boolean DEBUG = true;
-	private static final String DEFAULT_DEBUG_TAG = "twitter4j";
-
-    public static boolean isDebugEnabled() {
-        return DEBUG;
-    }
+	private static final String DEFAULT_DEBUG_TAG = "sonmiDebug";
 
 	public static void i(String tag, String string) {
 		if (DEBUG) {
@@ -27,11 +23,7 @@ public class Logger {
             Log.e(DEFAULT_DEBUG_TAG, string);
         }
     }
-
-    public static void debug(String string) {
-        d(string);
-    }
-
+	
 	public static void d(String string) {
 		if (DEBUG) {
 			Log.d(DEFAULT_DEBUG_TAG, string);

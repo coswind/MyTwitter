@@ -16,7 +16,7 @@
 
 package twitter4j.internal.http;
 
-import io.github.coswind.mytwitter.Utils.Logger;
+import io.github.coswind.mytwitter.utils.Logger;
 import twitter4j.TwitterException;
 import twitter4j.conf.ConfigurationContext;
 import twitter4j.internal.org.json.JSONArray;
