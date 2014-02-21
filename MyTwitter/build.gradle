@@ -35,4 +35,5 @@ android {
 
 dependencies {
     compile 'com.alibaba:fastjson:1.1.36'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
 }
