@@ -78,7 +78,7 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
                 timeLineAdapter = new TimeLineAdapter(getActivity());
                 listView.setAdapter(timeLineAdapter);
                 Paging paging = new Paging();
-                paging.setCount(200);
+                paging.setCount(20);
                 getHomeTimeLine(paging);
                 pullToRefreshLayout.setRefreshing(true);
             }

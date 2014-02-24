@@ -223,7 +223,7 @@ public class HttpClientImpl extends HttpClientBase implements HttpResponseCode, 
         HttpURLConnection con;
 
         Logger.d("Origin Url: " + url);
-        url = url.replace("://" + TwitterConstants.TWITTER_API_HOST, "://www.google.com");
+        url = url.replace("://" + TwitterConstants.TWITTER_API_HOST, "://" + TwitterConstants.TWITTER_API_HOST_PROXY);
         Logger.d("Replace Url: " + url);
 
         if (isProxyConfigured()) {
