@@ -3,8 +3,13 @@ package io.github.coswind.mytwitter;
 import android.app.Application;
 import android.content.Context;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
+import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 
@@ -14,6 +19,7 @@ import twitter4j.TwitterFactory;
 public class MyApplication extends Application {
     private Account account;
     private Twitter twitter;
+    private ImageLoaderWrapper imageLoaderWrapper;
 
     @Override
     public void onCreate() {
@@ -42,5 +48,19 @@ public class MyApplication extends Application {
         }
 
         return twitter;
+    }
+
+    public ImageLoaderWrapper getImageLoaderWrapper() {
+        if (imageLoaderWrapper == null) {
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            ImageLoaderConfiguration.Builder builder = new ImageLoaderConfiguration.Builder(this);
+            builder.threadPriority(Thread.NORM_PRIORITY - 2);
+            builder.denyCacheImageMultipleSizesInMemory();
+            builder.tasksProcessingOrder(QueueProcessingType.LIFO);
+            imageLoader.init(builder.build());
+            imageLoaderWrapper = new ImageLoaderWrapper(imageLoader);
+        }
+
+        return imageLoaderWrapper;
     }
 }

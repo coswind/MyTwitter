@@ -13,16 +13,12 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
--->
+  -->
+
 <resources>
 
-    <dimen name="padding_0">4dp</dimen>
-    <dimen name="padding_1">6dp</dimen>
-    <dimen name="padding_2">8dp</dimen>
-
-    <dimen name="profile_image_medium">48dp</dimen>
-    <dimen name="time_line_item_height">64dp</dimen>
-
-    <dimen name="ptr_progress_bar_stroke_width">4dp</dimen>
+    <item type="id" name="ptr_content" />
+    <item type="id" name="ptr_text" />
+    <item type="id" name="ptr_progress" />
 
 </resources>

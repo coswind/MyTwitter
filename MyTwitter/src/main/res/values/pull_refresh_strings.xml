@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2013 Chris Banes
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +12,12 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
--->
+  -->
+
 <resources>
 
-    <dimen name="padding_0">4dp</dimen>
-    <dimen name="padding_1">6dp</dimen>
-    <dimen name="padding_2">8dp</dimen>
-
-    <dimen name="profile_image_medium">48dp</dimen>
-    <dimen name="time_line_item_height">64dp</dimen>
-
-    <dimen name="ptr_progress_bar_stroke_width">4dp</dimen>
+    <string name="pull_to_refresh_pull_label">Pull to refresh…</string>
+    <string name="pull_to_refresh_release_label">Release to refresh…</string>
+    <string name="pull_to_refresh_refreshing_label">Loading…</string>
 
 </resources>
