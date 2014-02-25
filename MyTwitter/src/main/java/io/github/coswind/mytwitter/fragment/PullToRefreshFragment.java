@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.github.coswind.mytwitter.R;
+import io.github.coswind.mytwitter.utils.LogUtils;
 
 /**
  * Created by coswind on 14-2-25.
@@ -131,6 +132,8 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        LogUtils.d("distanceX: " + distanceX + " distanceY: " + distanceY);
+
         if (!isRefreshingUp && isReadyForPullFromTop()) {
             float progress = (e2.getY() - e1.getY()) / MAX_PULL_DISTANCE;
             onPullUp(progress);
