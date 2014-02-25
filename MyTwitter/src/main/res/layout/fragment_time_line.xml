@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-        android:id="@id/ptr_progress"
+        android:id="@+id/ptr_progress_up"
         style="@style/Widget.ProgressBar.PullToRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -14,8 +14,13 @@
         android:id="@+id/list_view"
         style="@style/TimeLineList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-    </ListView>
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/ptr_progress_bottom"
+        style="@style/Widget.ProgressBar.PullToRefresh"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </FrameLayout>

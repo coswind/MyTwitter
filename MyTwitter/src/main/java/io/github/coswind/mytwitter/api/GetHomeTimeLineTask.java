@@ -1,11 +1,7 @@
 package io.github.coswind.mytwitter.api;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import io.github.coswind.mytwitter.utils.LogUtils;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -20,9 +16,12 @@ public class GetHomeTimeLineTask extends AsyncTask<Paging, Void, ResponseList<St
     private Twitter twitter;
     private HomeTimeLineCallback cb;
 
-    public GetHomeTimeLineTask(Twitter twitter, HomeTimeLineCallback cb) {
+    private int type;
+
+    public GetHomeTimeLineTask(Twitter twitter, HomeTimeLineCallback cb, int type) {
         this.twitter = twitter;
         this.cb = cb;
+        this.type = type;
     }
 
     @Override
@@ -44,10 +43,10 @@ public class GetHomeTimeLineTask extends AsyncTask<Paging, Void, ResponseList<St
 
     @Override
     protected void onPostExecute(ResponseList<twitter4j.Status> statuses) {
-        cb.onHomeTimeLine(statuses);
+        cb.onHomeTimeLine(type, statuses);
     }
 
     public static interface HomeTimeLineCallback {
-        void onHomeTimeLine(ResponseList<twitter4j.Status> statuses);
+        void onHomeTimeLine(int type, ResponseList<twitter4j.Status> statuses);
     }
 }
