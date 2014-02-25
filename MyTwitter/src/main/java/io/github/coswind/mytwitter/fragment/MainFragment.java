@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.alibaba.fastjson.JSON;
 
+import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -139,13 +141,14 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
 
     @Override
     public void onHomeTimeLine(int type, ResponseList<Status> statuses) {
-        if (statuses == null) {
+        int statusCount = statuses == null ? -1 : statuses.size();
+        if (statusCount < 0) {
             Crouton.makeText(getActivity(), String.format(getString(R.string.home_time_line_refresh_error),
                     getString(R.string.network_error)), Style.ALERT).show();
-        } else if (statuses.size() == 0) {
+        } else if (statusCount == 0) {
             Crouton.makeText(getActivity(), "No Tweets.", Style.ALERT).show();
         } else {
-            Crouton.makeText(getActivity(), "Load " + statuses.size() + " Tweets.", Style.INFO).show();
+            Configuration.Builder builder = new Configuration.Builder();
             for (Status status : statuses) {
                 LogUtils.d(status.getUser().getName() + " --> " + status.getId() + " --> " + status.getText());
             }
@@ -156,10 +159,10 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
                     statuses.addAll(oldStatuses);
                 }
                 if (oldestStatus == null) {
-                    oldestStatus = statuses.get(statuses.size() - 1);
+                    oldestStatus = statuses.get(statusCount - 1);
                 }
             } else if (type == FROM_BOTTOM) {
-                oldestStatus = statuses.get(statuses.size() - 1);
+                oldestStatus = statuses.get(statusCount - 1);
                 if (oldStatuses != null) {
                     oldStatuses.addAll(statuses);
                     statuses = oldStatuses;
@@ -167,7 +170,10 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
                 if (latestStatus == null) {
                     latestStatus = statuses.get(0);
                 }
+                builder.setViewGroupPosition(Configuration.POSITION_END);
             }
+            Crouton.makeText(getActivity(), "Load " + statusCount + " Tweets.", Style.INFO)
+                    .setConfiguration(builder.build()).show();
             timeLineAdapter.setStatuses(statuses);
         }
         timeLineAdapter.notifyDataSetChanged();

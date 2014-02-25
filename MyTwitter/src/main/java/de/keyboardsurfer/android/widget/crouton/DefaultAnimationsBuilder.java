@@ -20,69 +20,89 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
-/** Builds the default animations for showing and hiding a {@link de.keyboardsurfer.android.widget.crouton.Crouton}. */
+/**
+ * Builds the default animations for showing and hiding a {@link de.keyboardsurfer.android.widget.crouton.Crouton}.
+ */
 final class DefaultAnimationsBuilder {
-  private static final long DURATION = 400;
-  private static Animation slideInDownAnimation, slideOutUpAnimation;
-  private static int lastInAnimationHeight, lastOutAnimationHeight;
+    private static final long DURATION = 400;
+    private static Animation slideInDownAnimation, slideOutUpAnimation;
+    private static Animation slideInUpAnimation, slideOutDownAnimation;
+    private static int lastInAnimationHeight, lastOutAnimationHeight;
 
-  private DefaultAnimationsBuilder() {
+    private DefaultAnimationsBuilder() {
     /* no-op */
-  }
-
-  /**
-   * @param croutonView
-   *   The croutonView which gets animated.
-   *
-   * @return The default Animation for a showing {@link de.keyboardsurfer.android.widget.crouton.Crouton}.
-   */
-  static Animation buildDefaultSlideInDownAnimation(View croutonView) {
-    if (!areLastMeasuredInAnimationHeightAndCurrentEqual(croutonView) || (null == slideInDownAnimation)) {
-      slideInDownAnimation = new TranslateAnimation(
-        0, 0,                               // X: from, to
-        -croutonView.getMeasuredHeight(), 0 // Y: from, to
-      );
-      slideInDownAnimation.setDuration(DURATION);
-      setLastInAnimationHeight(croutonView.getMeasuredHeight());
     }
-    return slideInDownAnimation;
-  }
 
-  /**
-   * @param croutonView
-   *   The croutonView which gets animated.
-   *
-   * @return The default Animation for a hiding {@link de.keyboardsurfer.android.widget.crouton.Crouton}.
-   */
-  static Animation buildDefaultSlideOutUpAnimation(View croutonView) {
-    if (!areLastMeasuredOutAnimationHeightAndCurrentEqual(croutonView) || (null == slideOutUpAnimation)) {
-      slideOutUpAnimation = new TranslateAnimation(
-        0, 0,                               // X: from, to
-        0, -croutonView.getMeasuredHeight() // Y: from, to
-      );
-      slideOutUpAnimation.setDuration(DURATION);
-      setLastOutAnimationHeight(croutonView.getMeasuredHeight());
+    static Animation buildDefaultSlideInAnimation(View croutonView, boolean isDownUp) {
+        Animation animation = null;
+        if (isDownUp) {
+            if (!areLastMeasuredInAnimationHeightAndCurrentEqual(croutonView) || (null == slideInUpAnimation)) {
+                slideInUpAnimation = new TranslateAnimation(
+                        0, 0,                               // X: from, to
+                        croutonView.getMeasuredHeight(), 0 // Y: from, to
+                );
+                slideInUpAnimation.setDuration(DURATION);
+                setLastInAnimationHeight(croutonView.getMeasuredHeight());
+            }
+            animation = slideInUpAnimation;
+        } else {
+            if (!areLastMeasuredInAnimationHeightAndCurrentEqual(croutonView) || (null == slideInDownAnimation)) {
+                slideInDownAnimation = new TranslateAnimation(
+                        0, 0,                               // X: from, to
+                        -croutonView.getMeasuredHeight(), 0 // Y: from, to
+                );
+                slideInDownAnimation.setDuration(DURATION);
+                setLastInAnimationHeight(croutonView.getMeasuredHeight());
+            }
+            animation = slideInDownAnimation;
+        }
+        return animation;
     }
-    return slideOutUpAnimation;
-  }
 
-  private static boolean areLastMeasuredInAnimationHeightAndCurrentEqual(View croutonView) {
-    return areLastMeasuredAnimationHeightAndCurrentEqual(lastInAnimationHeight, croutonView);
-  }
+    static Animation buildDefaultSlideOutAnimation(View croutonView, boolean isDownUp) {
+        Animation animation = null;
+        if (isDownUp) {
+            if (!areLastMeasuredOutAnimationHeightAndCurrentEqual(croutonView) || (null == slideOutDownAnimation)) {
+                slideOutDownAnimation = new TranslateAnimation(
+                        0, 0,                               // X: from, to
+                        0, croutonView.getMeasuredHeight() // Y: from, to
+                );
+                slideOutDownAnimation.setDuration(DURATION);
+                setLastOutAnimationHeight(croutonView.getMeasuredHeight());
+            }
+            animation = slideOutDownAnimation;
+        } else {
+            if (!areLastMeasuredOutAnimationHeightAndCurrentEqual(croutonView) || (null == slideOutUpAnimation)) {
+                slideOutUpAnimation = new TranslateAnimation(
+                        0, 0,                               // X: from, to
+                        0, -croutonView.getMeasuredHeight() // Y: from, to
+                );
+                slideOutUpAnimation.setDuration(DURATION);
+                setLastOutAnimationHeight(croutonView.getMeasuredHeight());
+            }
+            animation = slideOutUpAnimation;
+        }
 
-  private static boolean areLastMeasuredOutAnimationHeightAndCurrentEqual(View croutonView) {
-    return areLastMeasuredAnimationHeightAndCurrentEqual(lastOutAnimationHeight, croutonView);
-  }
+        return animation;
+    }
 
-  private static boolean areLastMeasuredAnimationHeightAndCurrentEqual(int lastHeight, View croutonView) {
-    return lastHeight == croutonView.getMeasuredHeight();
-  }
+    private static boolean areLastMeasuredInAnimationHeightAndCurrentEqual(View croutonView) {
+        return areLastMeasuredAnimationHeightAndCurrentEqual(lastInAnimationHeight, croutonView);
+    }
 
-  private static void setLastInAnimationHeight(int lastInAnimationHeight) {
-    DefaultAnimationsBuilder.lastInAnimationHeight = lastInAnimationHeight;
-  }
+    private static boolean areLastMeasuredOutAnimationHeightAndCurrentEqual(View croutonView) {
+        return areLastMeasuredAnimationHeightAndCurrentEqual(lastOutAnimationHeight, croutonView);
+    }
 
-  private static void setLastOutAnimationHeight(int lastOutAnimationHeight) {
-    DefaultAnimationsBuilder.lastOutAnimationHeight = lastOutAnimationHeight;
-  }
+    private static boolean areLastMeasuredAnimationHeightAndCurrentEqual(int lastHeight, View croutonView) {
+        return lastHeight == croutonView.getMeasuredHeight();
+    }
+
+    private static void setLastInAnimationHeight(int lastInAnimationHeight) {
+        DefaultAnimationsBuilder.lastInAnimationHeight = lastInAnimationHeight;
+    }
+
+    private static void setLastOutAnimationHeight(int lastOutAnimationHeight) {
+        DefaultAnimationsBuilder.lastOutAnimationHeight = lastOutAnimationHeight;
+    }
 }
