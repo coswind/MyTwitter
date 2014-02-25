@@ -150,7 +150,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
         } else {
             Configuration.Builder builder = new Configuration.Builder();
             for (Status status : statuses) {
-                LogUtils.d(status.getUser().getName() + " --> " + status.getText());
+//                LogUtils.d(status.getUser().getName() + " --> " + status.getText());
             }
             ResponseList<Status> oldStatuses = timeLineAdapter.getStatuses();
             if (type == FROM_TOP) {

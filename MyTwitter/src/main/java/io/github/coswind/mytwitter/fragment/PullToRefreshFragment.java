@@ -5,6 +5,7 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -132,7 +133,9 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        LogUtils.d("distanceX: " + distanceX + " distanceY: " + distanceY);
+        if (Math.abs(e2.getY() - e1.getY()) < Math.abs(e2.getX() - e1.getX())) {
+            return false;
+        }
 
         if (!isRefreshingUp && isReadyForPullFromTop()) {
             float progress = (e2.getY() - e1.getY()) / MAX_PULL_DISTANCE;
