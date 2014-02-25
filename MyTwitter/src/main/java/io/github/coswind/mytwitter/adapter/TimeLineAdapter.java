@@ -16,6 +16,7 @@ import org.w3c.dom.Text;
 
 import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
+import io.github.coswind.mytwitter.animation.Rotate3dAnimation;
 import io.github.coswind.mytwitter.utils.DateUtils;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
 import io.github.coswind.mytwitter.utils.LogUtils;
@@ -92,7 +93,7 @@ public class TimeLineAdapter extends BaseAdapter {
         imageLoaderWrapper.displayProfileImage(viewHolder.profileImage, status.getUser().getProfileImageURL());
 
         if (position > maxAnimationPosition) {
-            convertView.startAnimation(viewHolder.animation);
+            convertView.startAnimation(viewHolder.animationSet);
             maxAnimationPosition = position;
         }
 
@@ -106,12 +107,16 @@ public class TimeLineAdapter extends BaseAdapter {
         TextView name;
         TextView time;
 
-        Animation animation;
+        AnimationSet animationSet;
 
         ViewHolder() {
-            this.animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+            TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-            animation.setDuration(500);
+            Rotate3dAnimation rotate3dAnimation = new Rotate3dAnimation(10, 0, 0.5f, 1, 0, false);
+            animationSet = new AnimationSet(false);
+            animationSet.addAnimation(translateAnimation);
+            animationSet.addAnimation(rotate3dAnimation);
+            animationSet.setDuration(500);
         }
     }
 }
