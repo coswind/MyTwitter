@@ -1,17 +1,26 @@
 package io.github.coswind.mytwitter.fragment;
 
 import android.app.Fragment;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.alibaba.fastjson.JSON;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.TwitterConstants;
@@ -38,14 +47,18 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 /**
  * Created by coswind on 14-2-13.
  */
-public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTimeLineCallback, OnRefreshListener {
+public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTimeLineCallback, View.OnTouchListener, GestureDetector.OnGestureListener {
     private HttpClient httpClient;
     private Twitter twitter;
 
     private ListView listView;
     private TimeLineAdapter timeLineAdapter;
+    private SmoothProgressBar smoothProgressBar;
 
-    private PullToRefreshLayout pullToRefreshLayout;
+    private GestureDetector gestureDetector;
+    private boolean isRefreshing;
+
+    public final static float MAX_PULL_DISTANCE = 200.0f;
 
     private Status latestStatus;
 
@@ -64,6 +77,9 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        applyProgressBarSettings();
+
+        gestureDetector = new GestureDetector(getActivity(), this);
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -77,23 +93,53 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
                 super.onPostExecute(aVoid);
                 timeLineAdapter = new TimeLineAdapter(getActivity());
                 listView.setAdapter(timeLineAdapter);
-                Paging paging = new Paging();
-                paging.setCount(20);
-                getHomeTimeLine(paging);
-                pullToRefreshLayout.setRefreshing(true);
+                onRefreshing();
             }
         }.execute();
     }
 
     private void initView(View view) {
         listView = (ListView) view.findViewById(R.id.list_view);
+        listView.setOnTouchListener(this);
+        smoothProgressBar = (SmoothProgressBar) view.findViewById(R.id.ptr_progress);
+    }
 
-        pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
-        ActionBarPullToRefresh.from(getActivity())
-                .options(Options.create().scrollDistance(0.5f).build())
-                .allChildrenArePullable()
-                .listener(this)
-                .setup(pullToRefreshLayout);
+    private void onPullUp(float progress) {
+        if (isRefreshing) {
+            return;
+        }
+        smoothProgressBar.setVisibility(View.VISIBLE);
+        smoothProgressBar.setProgress(Math.round(smoothProgressBar.getMax() * progress));
+        smoothProgressBar.setIndeterminate(false);
+    }
+
+    private void applyProgressBarSettings() {
+        if (smoothProgressBar != null) {
+            int progressDrawableColor = getActivity().getResources()
+                    .getColor(R.color.default_progress_bar_color);
+            ShapeDrawable shape = new ShapeDrawable();
+            shape.setShape(new RectShape());
+            shape.getPaint().setColor(progressDrawableColor);
+            ClipDrawable clipDrawable = new ClipDrawable(shape, Gravity.CENTER, ClipDrawable.HORIZONTAL);
+
+            smoothProgressBar.setProgressDrawable(clipDrawable);
+        }
+    }
+
+    private void onRefreshing() {
+        if (!isRefreshing) {
+            smoothProgressBar.setVisibility(View.VISIBLE);
+            smoothProgressBar.setProgress(100);
+            smoothProgressBar.setIndeterminate(true);
+            isRefreshing = true;
+            getHomeTimeLine();
+        }
+    }
+
+    private void onRefreshEnd() {
+        smoothProgressBar.setIndeterminate(false);
+        smoothProgressBar.setVisibility(View.INVISIBLE);
+        isRefreshing = false;
     }
 
     private void init() {
@@ -175,17 +221,83 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         }
 
         timeLineAdapter.notifyDataSetChanged();
-        pullToRefreshLayout.setRefreshComplete();
+        onRefreshEnd();
     }
 
     @Override
-    public void onRefreshStarted(View view) {
-        if (latestStatus == null) {
-            getHomeTimeLine();
-        } else {
-            Paging paging = new Paging();
-            paging.setSinceId(latestStatus.getId());
-            getHomeTimeLine(paging);
+    public boolean onTouch(View v, MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            onPullUp(0.0f);
         }
+        return false;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        if (isReadyForPullFromTop()) {
+            float progress = (e2.getY() - e1.getY()) / MAX_PULL_DISTANCE;
+            onPullUp(progress);
+
+            if (progress >= 1.0f) {
+                onRefreshing();
+                LogUtils.d("onRereshing");
+            }
+        } else if (isReadyForPullFromBottom()) {
+            LogUtils.d("pull bottom");
+        }
+
+        return false;
+    }
+
+    private boolean isReadyForPullFromTop() {
+        boolean ready = false;
+
+        if (listView.getCount() == 0) {
+            ready = true;
+        } else if (listView.getFirstVisiblePosition() == 0) {
+            final View firstVisibleChild = listView.getChildAt(0);
+            ready = firstVisibleChild != null && firstVisibleChild.getTop() >= 0;
+        }
+
+        return ready;
+    }
+
+    private boolean isReadyForPullFromBottom() {
+        boolean ready = false;
+
+        if (listView.getLastVisiblePosition() == listView.getCount() - 1) {
+            final View lastVisibleChild = listView.getChildAt(listView.getLastVisiblePosition() -
+                    listView.getFirstVisiblePosition());
+            ready = lastVisibleChild != null && (lastVisibleChild.getBottom() +
+                    listView.getListPaddingBottom() == listView.getHeight());
+        }
+
+        return ready;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
     }
 }

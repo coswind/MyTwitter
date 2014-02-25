@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ptr_layout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@id/ptr_progress"
+        style="@style/Widget.ProgressBar.PullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ListView
         android:id="@+id/list_view"
         style="@style/TimeLineList"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="@dimen/padding_0"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </ListView>
 
-</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
+</FrameLayout>
