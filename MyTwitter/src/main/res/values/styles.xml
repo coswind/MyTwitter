@@ -30,6 +30,7 @@
         <item name="android:divider">@android:color/transparent</item>
         <item name="android:dividerHeight">@dimen/padding_0</item>
         <item name="android:listSelector">@android:color/transparent</item>
+        <item name="android:clipToPadding">false</item>
     </style>
 
     <style name="Widget.ProgressBar.PullToRefresh" parent="SmoothProgressBar">
