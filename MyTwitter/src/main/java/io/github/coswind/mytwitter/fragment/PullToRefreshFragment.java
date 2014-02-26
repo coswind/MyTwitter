@@ -28,7 +28,7 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
     private boolean isRefreshingUp;
     private boolean isRefreshingBottom;
 
-    public final static float MAX_PULL_DISTANCE = 400.0f;
+    public final static float MAX_PULL_DISTANCE = 300.0f;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
