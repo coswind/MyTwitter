@@ -2,7 +2,6 @@ package io.github.coswind.mytwitter.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +21,9 @@ import io.github.coswind.mytwitter.animation.Rotate3dAnimation;
 import io.github.coswind.mytwitter.api.ReTweetTask;
 import io.github.coswind.mytwitter.utils.DateUtils;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
-import io.github.coswind.mytwitter.utils.LogUtils;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 
 /**
  * Created by coswind on 14-2-20.
@@ -158,6 +155,8 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     public void onReTweet(boolean isSuccess) {
         if (isSuccess) {
             Crouton.makeText(activity, "Retweet Success", Style.INFO).show();
+            clickedStatus.setRetweetedByMe(true);
+            notifyDataSetChanged();
         } else {
             Crouton.makeText(activity, "Retweet Fail", Style.ALERT).show();
         }

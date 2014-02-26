@@ -420,6 +420,11 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
         return isoLanguageCode;
     }
 
+    @Override
+    public void setRetweetedByMe(boolean isRetweeted) {
+        currentUserRetweetId = 0L;
+    }
+
     /*package*/
     static ResponseList<Status> createStatusList(HttpResponse res, Configuration conf) throws TwitterException {
         try {

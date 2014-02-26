@@ -193,4 +193,6 @@ public interface Status extends Comparable<Status>, TwitterResponse,
      * @return two-letter iso language code
      */
     String getIsoLanguageCode();
+
+    void setRetweetedByMe(boolean isRetweeted);
 }
