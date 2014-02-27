@@ -18,6 +18,7 @@
 
     <style name="AppTheme" parent="android:Theme.Holo.Light">
         <!-- Customize your theme here. -->
+        <item name="tabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
     </style>
 
     <style name="TimeLineItem">
@@ -36,5 +37,28 @@
     <style name="Widget.ProgressBar.PullToRefresh" parent="SmoothProgressBar">
         <item name="android:minHeight">@dimen/ptr_progress_bar_stroke_width</item>
     </style>
+
+    <style name="Widget">
+    </style>
+
+    <style name="Widget.TabPageIndicator" parent="Widget">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/tab_view_background</item>
+        <item name="android:paddingLeft">22dip</item>
+        <item name="android:paddingRight">22dip</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.TabPageIndicator</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="bottomIndicatorColor">@color/blue</item>
+        <item name="bottomIndicatorHeight">@dimen/default_bottom_view_height</item>
+    </style>
+
+    <style name="TextAppearance.TabPageIndicator" parent="Widget">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/tab_view_font</item>
+    </style>
+
 
 </resources>

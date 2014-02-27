@@ -3,14 +3,19 @@ package io.github.coswind.mytwitter;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import io.github.coswind.mytwitter.fragment.MainFragment;
-import io.github.coswind.mytwitter.utils.LogUtils;
+import com.coswind.viewpagerindicator.TabPagerIndicator;
 
-public class MainActivity extends Activity {
-    private ActionBar actionBar;
+import io.github.coswind.mytwitter.fragment.MainFragment;
+
+public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +23,38 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new MainFragment())
-                    .commit();
+//            getFragmentManager().beginTransaction()
+//                    .add(R.id.container, new MainFragment())
+//                    .commit();
         }
 
-        actionBar = getActionBar();
+        ActionBar actionBar = getActionBar();
         actionBar.setCustomView(R.layout.custom_action_bar);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+            protected final String[] CONTENT = new String[]{"ONE", "TWO", "THR"};
+
+            @Override
+            public Fragment getItem(int i) {
+                return new MainFragment();
+            }
+
+            @Override
+            public int getCount() {
+                return 3;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return CONTENT[position % CONTENT.length];
+            }
+        });
+
+        TabPagerIndicator tabPagerIndicator = (TabPagerIndicator) findViewById(R.id.pager_indicator);
+        tabPagerIndicator.setViewPager(viewPager);
     }
 
 

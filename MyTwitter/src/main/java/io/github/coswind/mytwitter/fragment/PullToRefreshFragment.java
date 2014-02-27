@@ -1,10 +1,10 @@
 package io.github.coswind.mytwitter.fragment;
 
-import android.app.Fragment;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
