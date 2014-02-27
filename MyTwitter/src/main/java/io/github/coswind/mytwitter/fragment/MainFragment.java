@@ -123,11 +123,8 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
 
     private Account signIn() throws Exception {
         LogUtils.d("start signIn");
-        HttpParameter[] params = new HttpParameter[2];
-        params[0] = new HttpParameter("username", "xy2491259@gmail.com");
-        params[1] = new HttpParameter("password", "xy@2491259");
         HttpRequest request = new HttpRequest(RequestMethod.GET,
-                TwitterConstants.DIRECT_SIGN_IN_URL, params, null, null);
+                TwitterConstants.DIRECT_SIGN_IN_URL, null, null, null);
         String response = httpClient.request(request).asString();
 
         AccessToken accessToken = JSON.parseObject(response, AccessToken.class);
@@ -148,9 +145,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
             Crouton.makeText(getActivity(), "No Tweets.", Style.ALERT).show();
         } else {
             Configuration.Builder builder = new Configuration.Builder();
-            for (Status status : statuses) {
-//                LogUtils.d(status.getUser().getName() + " --> " + status.getText());
-            }
             ResponseList<Status> oldStatuses = timeLineAdapter.getStatuses();
             if (type == FROM_TOP) {
                 latestStatus = statuses.get(0);

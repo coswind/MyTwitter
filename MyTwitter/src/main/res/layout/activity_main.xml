@@ -4,4 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="io.github.coswind.mytwitter.MainActivity"
-    tools:ignore="MergeRootFrame" />
+    tools:ignore="MergeRootFrame">
+
+    <ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>
