@@ -82,22 +82,16 @@
         android:padding="@dimen/padding_2"
         android:textSize="15sp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <io.github.coswind.mytwitter.widget.ThemedTextView
+        android:id="@+id/right_status"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/padding_0"
+        android:paddingBottom="@dimen/padding_2"
         android:paddingLeft="@dimen/padding_2"
-        android:paddingRight="@dimen/padding_2">
-
-        <io.github.coswind.mytwitter.widget.ThemedTextView
-            android:id="@+id/right_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:drawablePadding="@dimen/padding_0"
-            android:paddingBottom="@dimen/padding_2"
-            android:singleLine="true"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="10sp" />
-    </RelativeLayout>
+        android:paddingRight="@dimen/padding_2"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="10sp" />
 
 </LinearLayout>

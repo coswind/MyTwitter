@@ -21,6 +21,7 @@ import io.github.coswind.mytwitter.animation.Rotate3dAnimation;
 import io.github.coswind.mytwitter.api.ReTweetTask;
 import io.github.coswind.mytwitter.utils.DateUtils;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
+import io.github.coswind.mytwitter.utils.LogUtils;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -86,8 +87,6 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             viewHolder.screenName = (TextView) convertView.findViewById(R.id.screenName);
             viewHolder.time = (TextView) convertView.findViewById(R.id.time);
             viewHolder.rightStatus = (TextView) convertView.findViewById(R.id.right_status);
-            viewHolder.rightStatus.setText(R.string.retweeted);
-            viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_retweeted, 0, 0, 0);
             viewHolder.overflowImage = (ImageView) convertView.findViewById(R.id.ellipsis);
             viewHolder.overflowImage.setOnClickListener(this);
             convertView.setTag(viewHolder);
@@ -96,15 +95,34 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         }
 
         Status status = statuses.get(position);
+        Status realStatus;
+
+        if (status.isRetweet()) {
+            realStatus = status.getRetweetedStatus();
+        } else {
+            realStatus = status;
+        }
 
         viewHolder.overflowImage.setTag(position);
-        viewHolder.text.setText(status.getText());
-        viewHolder.name.setText(status.getUser().getName());
-        viewHolder.screenName.setText("@" + status.getUser().getScreenName());
-        viewHolder.time.setText(DateUtils.formatTimestamp(activity, status.getCreatedAt()));
-        imageLoaderWrapper.displayProfileImage(viewHolder.profileImage, status.getUser().getProfileImageURL());
+        viewHolder.text.setText(realStatus.getText());
+        viewHolder.name.setText(realStatus.getUser().getName());
+        viewHolder.screenName.setText("@" + realStatus.getUser().getScreenName());
+        viewHolder.time.setText(DateUtils.formatTimestamp(activity, realStatus.getCreatedAt()));
+        imageLoaderWrapper.displayProfileImage(viewHolder.profileImage, realStatus.getUser().getProfileImageURL());
 
-        viewHolder.rightStatus.setVisibility(status.isRetweetedByMe() ? View.VISIBLE : View.GONE);
+        if (status.isRetweetedByMe()) {
+            viewHolder.rightStatus.setText(R.string.retweeted_by_me);
+            viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_retweeted_by_me, 0, 0, 0);
+            viewHolder.rightStatus.setVisibility(View.VISIBLE);
+        } else if (status.isRetweet()) {
+            viewHolder.rightStatus.setText(String.format(activity.getString(R.string.retweeted), status.getUser().getScreenName(), status.getRetweetCount()));
+            viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_retweeted, 0, 0, 0);
+            viewHolder.rightStatus.setVisibility(View.VISIBLE);
+        } else if (status.getInReplyToUserId() > 0) {
+        } else {
+            viewHolder.rightStatus.setVisibility(View.GONE);
+        }
+
 
         if (position > maxAnimationPosition) {
             convertView.startAnimation(viewHolder.animationSet);
