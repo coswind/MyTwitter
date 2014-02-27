@@ -1,4 +1,4 @@
-package io.github.coswind.mytwitter;
+package io.github.coswind.mytwitter.constant;
 
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.alibaba.fastjson.JSON;
@@ -16,7 +15,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
-import io.github.coswind.mytwitter.TwitterConstants;
+import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.adapter.TimeLineAdapter;
 import io.github.coswind.mytwitter.api.GetHomeTimeLineTask;
 import io.github.coswind.mytwitter.model.Account;

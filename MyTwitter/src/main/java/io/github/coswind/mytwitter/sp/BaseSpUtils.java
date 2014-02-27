@@ -3,7 +3,7 @@ package io.github.coswind.mytwitter.sp;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import io.github.coswind.mytwitter.TwitterConstants;
+import io.github.coswind.mytwitter.constant.TwitterConstants;
 
 /**
  * Created by coswind on 13-12-13.

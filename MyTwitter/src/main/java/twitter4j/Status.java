@@ -195,4 +195,6 @@ public interface Status extends Comparable<Status>, TwitterResponse,
     String getIsoLanguageCode();
 
     void setRetweetedByMe(boolean isRetweeted);
+
+    void setFavorite(boolean isFavorite);
 }

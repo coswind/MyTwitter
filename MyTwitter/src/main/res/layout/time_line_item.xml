@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.github.coswind.mytwitter.layout.CardLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/TimeLineItem"
+    android:id="@+id/layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -49,9 +50,9 @@
 
             <ImageView
                 android:id="@+id/ellipsis"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:layout_width="@dimen/profile_image_medium_half"
+                android:layout_height="@dimen/profile_image_medium_half"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_ellipsis_h" />
         </LinearLayout>
 
@@ -82,16 +83,22 @@
         android:padding="@dimen/padding_2"
         android:textSize="15sp" />
 
-    <io.github.coswind.mytwitter.widget.ThemedTextView
-        android:id="@+id/right_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/padding_0"
-        android:paddingBottom="@dimen/padding_2"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:paddingLeft="@dimen/padding_2"
         android:paddingRight="@dimen/padding_2"
-        android:singleLine="true"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="10sp" />
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+        <io.github.coswind.mytwitter.widget.ThemedTextView
+            android:id="@+id/right_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/padding_0"
+            android:paddingRight="@dimen/padding_2"
+            android:paddingBottom="@dimen/padding_2"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="10sp" />
+    </RelativeLayout>
+
+</io.github.coswind.mytwitter.layout.CardLinearLayout>

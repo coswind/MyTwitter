@@ -425,6 +425,11 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
         currentUserRetweetId = 0L;
     }
 
+    @Override
+    public void setFavorite(boolean isFavorite) {
+        isFavorited = isFavorite;
+    }
+
     /*package*/
     static ResponseList<Status> createStatusList(HttpResponse res, Configuration conf) throws TwitterException {
         try {
