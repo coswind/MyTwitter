@@ -1,11 +1,10 @@
 package io.github.coswind.mytwitter.fragment;
 
+import android.app.Fragment;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -14,7 +13,6 @@ import android.widget.ListView;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.github.coswind.mytwitter.R;
-import io.github.coswind.mytwitter.utils.LogUtils;
 
 /**
  * Created by coswind on 14-2-25.
