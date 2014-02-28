@@ -10,6 +10,8 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import io.github.coswind.mytwitter.fragment.MainFragment;
 
 public class MainActivity extends Activity {
+    private boolean isVisible;
+    private SlidingMenu slidingMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,19 +24,20 @@ public class MainActivity extends Activity {
                     .commit();
         }
 
-        SlidingMenu menu = new SlidingMenu(this);
-        menu.setMode(SlidingMenu.LEFT_RIGHT);
-        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        menu.setShadowWidthRes(R.dimen.shadow_width);
-        menu.setShadowDrawable(R.drawable.sidebar_shadow_l);
-        menu.setSecondaryShadowDrawable(R.drawable.sidebar_shadow_r);
-        menu.setBehindWidthRes(R.dimen.slidingmenu_width);
-        menu.setFadeDegree(0.35f);
-        menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
-        menu.setMenu(R.layout.left_menu);
-        menu.setSecondaryMenu(R.layout.right_menu);
-    }
+        slidingMenu = new SlidingMenu(this);
+        slidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        slidingMenu.setShadowWidthRes(R.dimen.shadow_width);
+        slidingMenu.setShadowDrawable(R.drawable.sidebar_shadow_l);
+        slidingMenu.setSecondaryShadowDrawable(R.drawable.sidebar_shadow_r);
+        slidingMenu.setBehindWidthRes(R.dimen.slidingmenu_width);
+        slidingMenu.setFadeDegree(0.35f);
+        slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
+        slidingMenu.setMenu(R.layout.left_menu);
+        slidingMenu.setSecondaryMenu(R.layout.right_menu);
 
+        MyApplication.getInstance(this).addActivity(this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,5 +57,31 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyApplication.getInstance(this).removeActivity(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isVisible = false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isVisible = true;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public SlidingMenu getMenu() {
+        return slidingMenu;
     }
 }

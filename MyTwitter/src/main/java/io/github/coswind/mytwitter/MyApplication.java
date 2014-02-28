@@ -1,11 +1,16 @@
 package io.github.coswind.mytwitter;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.model.Account;
@@ -21,6 +26,7 @@ public class MyApplication extends Application {
     private Account account;
     private Twitter twitter;
     private ImageLoaderWrapper imageLoaderWrapper;
+    private Set<Activity> activitySet = Collections.synchronizedSet(new HashSet<Activity>());
 
     @Override
     public void onCreate() {
@@ -63,5 +69,22 @@ public class MyApplication extends Application {
         }
 
         return imageLoaderWrapper;
+    }
+
+    public void addActivity(Activity activity) {
+        activitySet.add(activity);
+    }
+
+    public void removeActivity(Activity activity) {
+        activitySet.remove(activity);
+    }
+
+    public MainActivity getMainActivity() {
+        for (Activity activity : activitySet) {
+            if (activity instanceof MainActivity) {
+                return (MainActivity) activity;
+            }
+        }
+        return null;
     }
 }

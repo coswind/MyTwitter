@@ -21,4 +21,5 @@
     <string name="minutes_ago">%1$d 分钟前</string>
     
     <string name="update_status">发        推</string>
+    <string name="status_hint">眼见何事，情系何方，身在何处，心思何人？</string>
 </resources>
