@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 import io.github.coswind.mytwitter.fragment.MainFragment;
 
 public class MainActivity extends Activity {
@@ -19,12 +21,24 @@ public class MainActivity extends Activity {
                     .add(R.id.container, new MainFragment())
                     .commit();
         }
+
+        SlidingMenu menu = new SlidingMenu(this);
+        menu.setMode(SlidingMenu.LEFT_RIGHT);
+        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        menu.setShadowWidthRes(R.dimen.shadow_width);
+        menu.setShadowDrawable(R.drawable.sidebar_shadow_l);
+        menu.setSecondaryShadowDrawable(R.drawable.sidebar_shadow_r);
+        menu.setBehindWidthRes(R.dimen.slidingmenu_width);
+        menu.setFadeDegree(0.35f);
+        menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
+        menu.setMenu(R.layout.left_menu);
+        menu.setSecondaryMenu(R.layout.right_menu);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.card_status, menu);
         return true;

@@ -119,12 +119,12 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             viewHolder.cardLinearLayout.setDrawMask(true);
             viewHolder.cardLinearLayout.setMaskColor(ColorConstants.RE_TWEET_COLOR);
             viewHolder.rightStatus.setText(String.format(activity.getString(R.string.retweeted), status.getUser().getScreenName(), status.getRetweetCount()));
-            viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_retweeted, 0, 0, 0);
+            viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_retweet, 0, 0, 0);
             viewHolder.rightStatus.setVisibility(View.VISIBLE);
         } else if (status.getInReplyToStatusId() > 0) {
             viewHolder.cardLinearLayout.setDrawMask(false);
             viewHolder.rightStatus.setText(String.format(activity.getString(R.string.in_reply), getInReplyName(status)));
-            viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_group, 0, 0, 0);
+            viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_conversation, 0, 0, 0);
             viewHolder.rightStatus.setVisibility(View.VISIBLE);
         } else {
             viewHolder.cardLinearLayout.setDrawMask(false);

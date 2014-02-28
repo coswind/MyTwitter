@@ -16,8 +16,10 @@
 -->
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
+    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:colorBackgroundCacheHint">@color/lightest_gray</item>
+        <item name="android:windowBackground">@color/lightest_gray</item>
     </style>
 
     <style name="TimeLineItem">
@@ -35,5 +37,13 @@
 
     <style name="Widget.ProgressBar.PullToRefresh" parent="SmoothProgressBar">
         <item name="android:minHeight">@dimen/ptr_progress_bar_stroke_width</item>
+    </style>
+
+    <style name="sidebar_text" parent="@android:style/Widget.Holo.Light.TextView">
+        <item name="android:textSize">@dimen/sidebar_text_size</item>
+        <item name="android:textColor">@color/lighter_gray</item>
+        <item name="android:shadowColor">@color/sidebar_item_text_shadow_color</item>
+        <item name="android:shadowDy">2.0</item>
+        <item name="android:shadowRadius">2.0</item>
     </style>
 </resources>

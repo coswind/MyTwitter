@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_gray">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sidebar_item_height"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/sidebar_button_bg"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/padding_2"
+            android:layout_marginRight="@dimen/padding_2"
+            android:src="@drawable/ic_menu_update_status" />
+
+        <TextView
+            style="@style/sidebar_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/update_status" />
+    </LinearLayout>
+
+
+</RelativeLayout>

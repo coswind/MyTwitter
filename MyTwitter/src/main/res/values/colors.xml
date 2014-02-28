@@ -19,11 +19,13 @@
     <color name="light_blue">#33B5E5</color>
     <color name="blue">#0099CC</color>
 
+    <color name="sidebar_item_text_shadow_color">#bf000000</color>
+
     <color name="lightest_gray">#ffe5e5e5</color>
     <color name="lighter_gray">#ff999999</color>
     <color name="light_gray">#ff737373</color>
     <color name="mid_gray">#ff666666</color>
-    <color name="dark_gray">#ff333333</color>
+    <color name="dark_gray">#ff3b3b3b</color>
     <color name="darker_gray">#ff212121</color>
     <color name="darkest_gray">#ff191919</color>
 </resources>

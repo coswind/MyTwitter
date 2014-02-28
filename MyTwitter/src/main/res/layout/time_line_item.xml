@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <io.github.coswind.mytwitter.layout.CardLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/TimeLineItem"
     android:id="@+id/layout"
+    style="@style/TimeLineItem"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -18,34 +18,11 @@
             android:layout_height="@dimen/profile_image_medium"
             android:layout_marginRight="@dimen/padding_2" />
 
-        <io.github.coswind.mytwitter.widget.ThemedTextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/profile_image_medium_half"
-            android:layout_alignParentRight="true"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="10sp" />
-
-        <io.github.coswind.mytwitter.widget.ThemedTextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/profile_image_medium_half"
-            android:layout_toLeftOf="@id/time"
-            android:layout_toRightOf="@id/image_view"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
         <LinearLayout
             android:id="@+id/icon_layout"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/profile_image_medium_half"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/time"
             android:orientation="horizontal">
 
             <ImageView
@@ -57,11 +34,34 @@
         </LinearLayout>
 
         <io.github.coswind.mytwitter.widget.ThemedTextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/profile_image_medium_half"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/icon_layout"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="10sp" />
+
+        <io.github.coswind.mytwitter.widget.ThemedTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/profile_image_medium_half"
+            android:layout_toLeftOf="@id/icon_layout"
+            android:layout_toRightOf="@id/image_view"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <io.github.coswind.mytwitter.widget.ThemedTextView
             android:id="@+id/screenName"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/profile_image_medium_half"
             android:layout_below="@id/name"
-            android:layout_toLeftOf="@id/icon_layout"
+            android:layout_toLeftOf="@id/time"
             android:layout_toRightOf="@id/image_view"
             android:gravity="center_vertical"
             android:singleLine="true"
@@ -83,22 +83,16 @@
         android:padding="@dimen/padding_2"
         android:textSize="15sp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <io.github.coswind.mytwitter.widget.ThemedTextView
+        android:id="@+id/right_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/padding_0"
+        android:paddingBottom="@dimen/padding_2"
         android:paddingLeft="@dimen/padding_2"
         android:paddingRight="@dimen/padding_2"
-        android:layout_height="wrap_content">
-
-        <io.github.coswind.mytwitter.widget.ThemedTextView
-            android:id="@+id/right_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawablePadding="@dimen/padding_0"
-            android:paddingRight="@dimen/padding_2"
-            android:paddingBottom="@dimen/padding_2"
-            android:singleLine="true"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="10sp" />
-    </RelativeLayout>
-
+        android:paddingTop="@dimen/padding_0"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="10sp" />
 </io.github.coswind.mytwitter.layout.CardLinearLayout>
