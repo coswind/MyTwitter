@@ -28,8 +28,8 @@ public class MainActivity extends Activity {
         slidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         slidingMenu.setShadowWidthRes(R.dimen.shadow_width);
-        slidingMenu.setShadowDrawable(R.drawable.sidebar_shadow_l);
-        slidingMenu.setSecondaryShadowDrawable(R.drawable.sidebar_shadow_r);
+        slidingMenu.setShadowDrawable(R.drawable.left_sidebar_shadow);
+        slidingMenu.setSecondaryShadowDrawable(R.drawable.right_sidebar_shadow);
         slidingMenu.setBehindWidthRes(R.dimen.slidingmenu_width);
         slidingMenu.setFadeDegree(0.35f);
         slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);

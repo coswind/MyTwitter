@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/sidebar_item_height"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/sidebar_button_bg"
+        android:background="@drawable/bg_sidebar_button"
         android:clickable="true"
         android:focusable="true">
 
@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/padding_2"
             android:layout_marginRight="@dimen/padding_2"
-            android:src="@drawable/ic_menu_update_status" />
+            android:src="@drawable/ic_compose" />
 
         <TextView
             style="@style/sidebar_text"
