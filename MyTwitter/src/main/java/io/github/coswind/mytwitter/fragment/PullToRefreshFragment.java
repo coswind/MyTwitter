@@ -10,6 +10,9 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -31,6 +34,7 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
 
     private float initialMotionY;
     private float initialMotionX;
+    private float lastMotionY;
 
     private float touchSlop;
 
@@ -130,6 +134,7 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
     protected void onReset() {
         onPullUpCancel();
         onPullBottomCancel();
+        lastMotionY = -1f;
     }
 
     @Override
@@ -144,25 +149,43 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
                 if (!isRefreshingUp && isReadyForPullFromTop()) {
                     initialMotionX = x;
                     initialMotionY = y;
+                    lastMotionY = y;
                     isDragFromUp = true;
                 } else if (!isRefreshingBottom && isReadyForPullFromBottom()) {
                     initialMotionX = x;
                     initialMotionY = y;
+                    lastMotionY = y;
                     isDragFromBottom = true;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!isRefreshingUp && isDragFromUp) {
-                    float progress = (y - initialMotionY) / MAX_PULL_DISTANCE;
-                    onPullUp(progress);
-                    if (progress >= 1.0f) {
-                        onRefreshingUp();
+                    float yDx = y - lastMotionY;
+                    if (yDx >= -touchSlop) {
+                        float progress = (y - initialMotionY) / MAX_PULL_DISTANCE;
+                        onPullUp(progress);
+                        if (progress >= 1.0f) {
+                            onRefreshingUp();
+                        }
+                        if (yDx > 0f) {
+                            lastMotionY = y;
+                        }
+                    } else {
+                        onReset();
                     }
                 } else if (!isRefreshingBottom && isDragFromBottom) {
-                    float progress = (initialMotionY - y) / MAX_PULL_DISTANCE;
-                    onPullBottom(progress);
-                    if (progress >= 1.0f) {
-                        onRefreshingBottom();
+                    float yDx = y - lastMotionY;
+                    if (yDx <= touchSlop) {
+                        float progress = (initialMotionY - y) / MAX_PULL_DISTANCE;
+                        onPullBottom(progress);
+                        if (progress >= 1.0f) {
+                            onRefreshingBottom();
+                        }
+                        if (yDx < 0f) {
+                            lastMotionY = y;
+                        }
+                    } else {
+                        onReset();
                     }
                 }
                 break;
