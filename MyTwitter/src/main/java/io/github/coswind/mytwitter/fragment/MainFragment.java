@@ -138,7 +138,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     @Override
     public void onHomeTimeLine(int type, ResponseList<Status> statuses) {
         int statusCount = statuses == null ? -1 : statuses.size();
-        if (statusCount < 0) {
+        if (statuses == null) {
             Crouton.makeText(getActivity(), String.format(getString(R.string.home_time_line_refresh_error),
                     getString(R.string.network_error)), Style.ALERT).show();
         } else if (statusCount == 0) {

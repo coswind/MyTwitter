@@ -9,6 +9,7 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ListView;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -17,21 +18,28 @@ import io.github.coswind.mytwitter.R;
 /**
  * Created by coswind on 14-2-25.
  */
-public class PullToRefreshFragment extends Fragment implements View.OnTouchListener, GestureDetector.OnGestureListener {
+public class PullToRefreshFragment extends Fragment implements View.OnTouchListener {
     private ListView listView;
     private SmoothProgressBar upProgressBar;
     private SmoothProgressBar bottomProgressBar;
-    private GestureDetector gestureDetector;
 
     private boolean isRefreshingUp;
     private boolean isRefreshingBottom;
+
+    private boolean isDragFromUp;
+    private boolean isDragFromBottom;
+
+    private float initialMotionY;
+    private float initialMotionX;
+
+    private float touchSlop;
 
     public final static float MAX_PULL_DISTANCE = 300.0f;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        gestureDetector = new GestureDetector(getActivity(), this);
+        touchSlop = ViewConfiguration.get(getActivity()).getScaledTouchSlop();
     }
 
     public void setListView(ListView listView) {
@@ -101,54 +109,66 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
         }
     }
 
-    protected void onPullCancel() {
-        if (!isRefreshingUp && this.upProgressBar != null) {
+    protected void onPullBottomCancel() {
+        if (!isRefreshingUp && isDragFromUp && this.upProgressBar != null) {
             upProgressBar.setVisibility(View.INVISIBLE);
             upProgressBar.setProgress(0);
             upProgressBar.setIndeterminate(false);
+            isDragFromUp = false;
         }
+    }
 
-        if (!isRefreshingBottom && this.bottomProgressBar != null) {
+    protected void onPullUpCancel() {
+        if (!isRefreshingBottom && isDragFromBottom && this.bottomProgressBar != null) {
             bottomProgressBar.setVisibility(View.INVISIBLE);
             bottomProgressBar.setProgress(0);
             bottomProgressBar.setIndeterminate(false);
+            isDragFromBottom = false;
         }
+    }
+
+    protected void onReset() {
+        onPullUpCancel();
+        onPullBottomCancel();
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        gestureDetector.onTouchEvent(event);
+        float x = event.getX(), y = event.getY();
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
-                onPullCancel();
+                onReset();
+                break;
+            case MotionEvent.ACTION_DOWN:
+                if (!isRefreshingUp && isReadyForPullFromTop()) {
+                    initialMotionX = x;
+                    initialMotionY = y;
+                    isDragFromUp = true;
+                } else if (!isRefreshingBottom && isReadyForPullFromBottom()) {
+                    initialMotionX = x;
+                    initialMotionY = y;
+                    isDragFromBottom = true;
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (!isRefreshingUp && isDragFromUp) {
+                    float progress = (y - initialMotionY) / MAX_PULL_DISTANCE;
+                    onPullUp(progress);
+                    if (progress >= 1.0f) {
+                        onRefreshingUp();
+                    }
+                } else if (!isRefreshingBottom && isDragFromBottom) {
+                    float progress = (initialMotionY - y) / MAX_PULL_DISTANCE;
+                    onPullBottom(progress);
+                    if (progress >= 1.0f) {
+                        onRefreshingBottom();
+                    }
+                }
                 break;
             default:
                 break;
         }
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (Math.abs(e2.getY() - e1.getY()) < Math.abs(e2.getX() - e1.getX())) {
-            return false;
-        }
-
-        if (!isRefreshingUp && isReadyForPullFromTop()) {
-            float progress = (e2.getY() - e1.getY()) / MAX_PULL_DISTANCE;
-            onPullUp(progress);
-            if (progress >= 1.0f) {
-                onRefreshingUp();
-            }
-        } else if (!isRefreshingBottom && isReadyForPullFromBottom()) {
-            float progress = (e1.getY() - e2.getY()) / MAX_PULL_DISTANCE;
-            onPullBottom(progress);
-            if (progress >= 1.0f) {
-                onRefreshingBottom();
-            }
-        }
-
         return false;
     }
 
@@ -184,30 +204,5 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
 
             smoothProgressBar.setProgressDrawable(clipDrawable);
         }
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
     }
 }
