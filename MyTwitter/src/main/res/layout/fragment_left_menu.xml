@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sidebar_item_height"
+        android:layout_height="@dimen/sidebar_button_height"
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_sidebar_button"
         android:clickable="true"
@@ -22,7 +22,7 @@
             android:src="@drawable/ic_compose" />
 
         <TextView
-            style="@style/sidebar_text"
+            style="@style/SidebarText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"

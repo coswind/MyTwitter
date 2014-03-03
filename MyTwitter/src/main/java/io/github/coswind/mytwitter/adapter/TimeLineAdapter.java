@@ -83,7 +83,7 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         ViewHolder viewHolder;
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.time_line_item, null);
+            convertView = layoutInflater.inflate(R.layout.card, null);
             viewHolder = new ViewHolder();
             viewHolder.cardLinearLayout = (CardLinearLayout) convertView.findViewById(R.id.layout);
             viewHolder.text = (TextView) convertView.findViewById(R.id.text_view);

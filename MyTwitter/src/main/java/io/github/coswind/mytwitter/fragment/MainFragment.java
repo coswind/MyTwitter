@@ -169,7 +169,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
                     .setConfiguration(builder.build()).show();
             timeLineAdapter.setStatuses(statuses);
         }
-        timeLineAdapter.notifyDataSetChanged();
         if (type == FROM_TOP) {
             onRefreshUpEnd();
         } else if (type == FROM_BOTTOM) {

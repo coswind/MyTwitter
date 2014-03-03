@@ -15,11 +15,11 @@
   ~ limitations under the License.
 -->
 <resources>
-    <color name="default_progress_bar_color">#FF33B5E5</color>
+    <color name="default_progress_bar_color">@color/light_blue</color>
     <color name="light_blue">#33B5E5</color>
     <color name="blue">#0099CC</color>
 
-    <color name="sidebar_item_text_shadow_color">#bf000000</color>
+    <color name="sidebar_text_shadow_color">#bf000000</color>
 
     <color name="lightest_gray">#ffe5e5e5</color>
     <color name="lighter_gray">#ff999999</color>

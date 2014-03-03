@@ -9,8 +9,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import io.github.coswind.mytwitter.fragment.MainFragment;
 
-public class MainActivity extends Activity {
-    private boolean isVisible;
+public class MainActivity extends BaseActivity {
     private SlidingMenu slidingMenu;
 
     @Override
@@ -30,13 +29,11 @@ public class MainActivity extends Activity {
         slidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         slidingMenu.setShadowDrawable(R.drawable.left_sidebar_shadow);
         slidingMenu.setSecondaryShadowDrawable(R.drawable.right_sidebar_shadow);
-        slidingMenu.setBehindWidthRes(R.dimen.slidingmenu_width);
+        slidingMenu.setBehindWidthRes(R.dimen.sidebar_width);
         slidingMenu.setFadeDegree(0.35f);
         slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
-        slidingMenu.setMenu(R.layout.left_menu);
-        slidingMenu.setSecondaryMenu(R.layout.right_menu);
-
-        MyApplication.getInstance(this).addActivity(this);
+        slidingMenu.setMenu(R.layout.left_sidebar);
+        slidingMenu.setSecondaryMenu(R.layout.right_sidebar);
     }
 
     @Override
@@ -57,31 +54,5 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        MyApplication.getInstance(this).removeActivity(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        isVisible = false;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        isVisible = true;
-    }
-
-    public boolean isVisible() {
-        return isVisible;
-    }
-
-    public SlidingMenu getMenu() {
-        return slidingMenu;
     }
 }

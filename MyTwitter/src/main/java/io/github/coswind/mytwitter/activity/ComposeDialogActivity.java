@@ -6,14 +6,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import io.github.coswind.mytwitter.MainActivity;
 import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.api.UpdateStatusTask;
-import io.github.coswind.mytwitter.utils.LogUtils;
-import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 
@@ -62,10 +58,6 @@ public class ComposeDialogActivity extends Activity implements View.OnClickListe
         }
         StatusUpdate statusUpdate = new StatusUpdate(content);
         new UpdateStatusTask(twitter, MyApplication.getInstance(this)).execute(statusUpdate);
-        MainActivity mainActivity = MyApplication.getInstance(this).getMainActivity();
-        if (mainActivity != null) {
-            mainActivity.getMenu().showContent();
-        }
         finish();
     }
 }
