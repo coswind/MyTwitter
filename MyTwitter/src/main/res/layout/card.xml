@@ -80,6 +80,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:lineSpacingExtra="2.0dip"
+        android:lineSpacingMultiplier="1.0"
         android:padding="@dimen/padding_2"
         android:textSize="15sp" />
 

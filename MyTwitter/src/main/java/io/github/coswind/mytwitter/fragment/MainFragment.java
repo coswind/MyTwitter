@@ -23,6 +23,7 @@ import io.github.coswind.mytwitter.adapter.TimeLineAdapter;
 import io.github.coswind.mytwitter.api.GetHomeTimeLineTask;
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
+import io.github.coswind.mytwitter.utils.DisplayUtils;
 import io.github.coswind.mytwitter.utils.LogUtils;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -51,6 +52,8 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     public final static int FROM_TOP = 0;
     public final static int FROM_BOTTOM = 1;
 
+    private int listViewPaddingTop;
+
     public MainFragment() {
         httpClient = HttpClientFactory.getInstance(TwitterConstants.configuration);
     }
@@ -66,6 +69,8 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        listViewPaddingTop = getResources().getDimensionPixelSize(R.dimen.padding_1);
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -149,7 +154,15 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
         } else {
             Configuration.Builder builder = new Configuration.Builder();
             ResponseList<Status> oldStatuses = timeLineAdapter.getStatuses();
+            int scrollOffset = 0;
             if (type == FROM_TOP) {
+                if (listView.getChildCount() > 0) {
+                    final View firstView = listView.getChildAt(0);
+                    if (firstView != null) {
+                        scrollOffset = firstView.getTop() - listViewPaddingTop;
+                    }
+                }
+
                 latestStatus = statuses.get(0);
                 if (oldStatuses != null) {
                     statuses.addAll(oldStatuses);
@@ -171,6 +184,11 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
             Crouton.makeText(getActivity(), "Load " + statusCount + " Tweets.", Style.INFO)
                     .setConfiguration(builder.build()).show();
             timeLineAdapter.setStatuses(statuses);
+            timeLineAdapter.notifyDataSetChanged();
+
+            if (type == FROM_TOP && oldStatuses != null && oldStatuses.size() > 0 && statusCount > 0) {
+                listView.setSelectionFromTop(statusCount, scrollOffset);
+            }
         }
         if (type == FROM_TOP) {
             onRefreshUpEnd();
