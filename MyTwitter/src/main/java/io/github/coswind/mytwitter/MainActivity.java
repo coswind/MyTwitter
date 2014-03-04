@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import io.github.coswind.mytwitter.fragment.MainFragment;
+import io.github.coswind.mytwitter.utils.LogUtils;
 
 public class MainActivity extends BaseActivity {
     private SlidingMenu slidingMenu;

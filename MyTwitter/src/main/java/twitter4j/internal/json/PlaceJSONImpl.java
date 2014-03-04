@@ -16,6 +16,9 @@
 
 package twitter4j.internal.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import twitter4j.GeoLocation;
 import twitter4j.Place;
 import twitter4j.ResponseList;
@@ -35,7 +38,7 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.getUnescapedString;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.1
  */
-final class PlaceJSONImpl extends TwitterResponseImpl implements Place, java.io.Serializable {
+final class PlaceJSONImpl extends TwitterResponseImpl implements Place, java.io.Serializable, Parcelable {
     private String name;
     private String streetAddress;
     private String countryCode;
@@ -277,5 +280,69 @@ final class PlaceJSONImpl extends TwitterResponseImpl implements Place, java.io.
                 ", geometryCoordinates=" + (geometryCoordinates == null ? null : Arrays.asList(geometryCoordinates)) +
                 ", containedWithIn=" + (containedWithIn == null ? null : Arrays.asList(containedWithIn)) +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<PlaceJSONImpl> CREATOR = new Creator<PlaceJSONImpl>() {
+
+        @Override
+        public PlaceJSONImpl createFromParcel(Parcel source) {
+            return new PlaceJSONImpl(source);
+        }
+
+        @Override
+        public PlaceJSONImpl[] newArray(int size) {
+            return new PlaceJSONImpl[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(streetAddress);
+        dest.writeString(countryCode);
+        dest.writeString(id);
+        dest.writeString(country);
+        dest.writeString(placeType);
+        dest.writeString(url);
+        dest.writeString(fullName);
+        dest.writeString(boundingBoxType);
+        dest.writeInt(boundingBoxCoordinates.length);
+        for (GeoLocation[] geoLocations : boundingBoxCoordinates) {
+            dest.writeParcelableArray(geoLocations, flags);
+        }
+        dest.writeString(geometryType);
+        dest.writeInt(geometryCoordinates.length);
+        for (GeoLocation[] geoLocations : geometryCoordinates) {
+            dest.writeParcelableArray(geoLocations, flags);
+        }
+        dest.writeParcelableArray(containedWithIn, flags);
+    }
+
+    PlaceJSONImpl(Parcel source) {
+        name = source.readString();
+        streetAddress = source.readString();
+        countryCode = source.readString();
+        id = source.readString();
+        country = source.readString();
+        placeType = source.readString();
+        url = source.readString();
+        fullName = source.readString();
+        boundingBoxType = source.readString();
+        int N = source.readInt();
+        boundingBoxCoordinates = new GeoLocation[N][];
+        for (int i = 0; i < N; i++) {
+            boundingBoxCoordinates[i] = (GeoLocation[]) source.readParcelableArray(GeoLocation.class.getClassLoader());
+        }
+        N = source.readInt();
+        geometryCoordinates = new GeoLocation[N][];
+        for (int i = 0; i < N; i++) {
+            geometryCoordinates[i] = (GeoLocation[]) source.readParcelableArray(GeoLocation.class.getClassLoader());
+        }
+        containedWithIn = (Place[]) source.readParcelableArray(Place.class.getClassLoader());
     }
 }

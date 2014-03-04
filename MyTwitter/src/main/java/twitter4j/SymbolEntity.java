@@ -15,13 +15,15 @@
  */
 package twitter4j;
 
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 3.0.4
  */
-public interface SymbolEntity extends TweetEntity, Serializable {
+public interface SymbolEntity extends TweetEntity, Serializable, Parcelable {
     /**
      * Returns the index of the start character of the symbol.
      *

@@ -16,6 +16,9 @@
 
 package twitter4j.internal.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import twitter4j.TwitterException;
 import twitter4j.URLEntity;
 import twitter4j.internal.org.json.JSONArray;
@@ -132,7 +135,6 @@ import twitter4j.internal.org.json.JSONObject;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
         URLEntityJSONImpl that = (URLEntityJSONImpl) o;
 
@@ -158,5 +160,36 @@ import twitter4j.internal.org.json.JSONObject;
                 ", expandedURL='" + expandedURL + '\'' +
                 ", displayURL='" + displayURL + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<URLEntityJSONImpl> CREATOR = new Creator<URLEntityJSONImpl>() {
+
+        @Override
+        public URLEntityJSONImpl createFromParcel(Parcel source) {
+            return new URLEntityJSONImpl(source);
+        }
+
+        @Override
+        public URLEntityJSONImpl[] newArray(int size) {
+            return new URLEntityJSONImpl[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(url);
+        dest.writeString(expandedURL);
+        dest.writeString(displayURL);
+    }
+
+    URLEntityJSONImpl(Parcel source) {
+        url = source.readString();
+        expandedURL = source.readString();
+        displayURL = source.readString();
     }
 }

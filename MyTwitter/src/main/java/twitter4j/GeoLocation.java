@@ -16,12 +16,15 @@
 
 package twitter4j;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * A data class representing geo location.
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class GeoLocation implements java.io.Serializable {
+public class GeoLocation implements java.io.Serializable, Parcelable {
 
     protected double latitude;
     protected double longitude;
@@ -91,5 +94,34 @@ public class GeoLocation implements java.io.Serializable {
                 "latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<GeoLocation> CREATOR = new Creator<GeoLocation>() {
+
+        @Override
+        public GeoLocation createFromParcel(Parcel source) {
+            return new GeoLocation(source);
+        }
+
+        @Override
+        public GeoLocation[] newArray(int size) {
+            return new GeoLocation[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+    }
+
+    GeoLocation(Parcel source) {
+        latitude = source.readDouble();
+        longitude = source.readDouble();
     }
 }

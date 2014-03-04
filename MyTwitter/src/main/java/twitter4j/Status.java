@@ -16,6 +16,8 @@
 
 package twitter4j;
 
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
@@ -24,7 +26,7 @@ import java.util.Date;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public interface Status extends Comparable<Status>, TwitterResponse,
-        EntitySupport, java.io.Serializable {
+        EntitySupport, java.io.Serializable, Parcelable {
     /**
      * Return the created_at
      *

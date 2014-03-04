@@ -16,6 +16,8 @@
 
 package twitter4j;
 
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
@@ -24,7 +26,7 @@ import java.io.Serializable;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.9
  */
-public interface UserMentionEntity extends TweetEntity, Serializable {
+public interface UserMentionEntity extends TweetEntity, Serializable, Parcelable {
     /**
      * Returns the screen name mentioned in the status. This method implementation is to meet TweetEntity interface and the behavior is equivalent to {@link #getScreenName()}
      *

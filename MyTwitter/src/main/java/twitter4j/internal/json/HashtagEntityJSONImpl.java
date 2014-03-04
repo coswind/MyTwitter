@@ -16,6 +16,9 @@
 
 package twitter4j.internal.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import twitter4j.HashtagEntity;
 import twitter4j.SymbolEntity;
 import twitter4j.TwitterException;
@@ -92,7 +95,6 @@ import twitter4j.internal.org.json.JSONObject;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
         HashtagEntityJSONImpl that = (HashtagEntityJSONImpl) o;
 
@@ -111,5 +113,32 @@ import twitter4j.internal.org.json.JSONObject;
         return "HashtagEntityJSONImpl{" +
                 "text='" + text + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<HashtagEntityJSONImpl> CREATOR = new Creator<HashtagEntityJSONImpl>() {
+
+        @Override
+        public HashtagEntityJSONImpl createFromParcel(Parcel source) {
+            return new HashtagEntityJSONImpl(source);
+        }
+
+        @Override
+        public HashtagEntityJSONImpl[] newArray(int size) {
+            return new HashtagEntityJSONImpl[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(text);
+    }
+
+    HashtagEntityJSONImpl(Parcel source) {
+        text = source.readString();
     }
 }

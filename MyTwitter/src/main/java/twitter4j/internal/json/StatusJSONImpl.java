@@ -16,6 +16,9 @@
 
 package twitter4j.internal.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import twitter4j.*;
 import twitter4j.conf.Configuration;
 import twitter4j.internal.http.HttpResponse;
@@ -33,7 +36,7 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-/*package*/ final class StatusJSONImpl extends TwitterResponseImpl implements Status, java.io.Serializable {
+/*package*/ final class StatusJSONImpl extends TwitterResponseImpl implements Status, java.io.Serializable, Parcelable {
     private static final long serialVersionUID = 7548618898682727465L;
 
     private Date createdAt;
@@ -500,5 +503,78 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
                 ", currentUserRetweetId=" + currentUserRetweetId +
                 ", user=" + user +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<StatusJSONImpl> CREATOR = new Creator<StatusJSONImpl>() {
+
+        @Override
+        public StatusJSONImpl createFromParcel(Parcel source) {
+            return new StatusJSONImpl(source);
+        }
+
+        @Override
+        public StatusJSONImpl[] newArray(int size) {
+            return new StatusJSONImpl[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(createdAt.getTime());
+        dest.writeLong(id);
+        dest.writeString(text);
+        dest.writeString(source);
+        dest.writeByte((byte) (isTruncated ? 1 : 0));
+        dest.writeLong(inReplyToStatusId);
+        dest.writeLong(inReplyToUserId);
+        dest.writeByte((byte) (isFavorited ? 1 : 0));
+        dest.writeByte((byte) (isRetweeted ? 1 : 0));
+        dest.writeInt(favoriteCount);
+        dest.writeString(inReplyToScreenName);
+        dest.writeParcelable(geoLocation, flags);
+        dest.writeParcelable(place, flags);
+        dest.writeLong(retweetCount);
+        dest.writeByte((byte) (isPossiblySensitive ? 1 : 0));
+        dest.writeString(isoLanguageCode);
+        dest.writeLongArray(contributorsIDs);
+        dest.writeParcelable(retweetedStatus, flags);
+        dest.writeParcelableArray(userMentionEntities, flags);
+        dest.writeParcelableArray(urlEntities, flags);
+        dest.writeParcelableArray(hashtagEntities, flags);
+        dest.writeParcelableArray(mediaEntities, flags);
+        dest.writeParcelableArray(symbolEntities, flags);
+        dest.writeLong(currentUserRetweetId);
+    }
+
+    StatusJSONImpl(Parcel in) {
+        createdAt = new Date(in.readLong());
+        id = in.readLong();
+        text = in.readString();
+        source = in.readString();
+        isTruncated = in.readByte() != 0;
+        inReplyToStatusId = in.readLong();
+        inReplyToUserId = in.readLong();
+        isFavorited = in.readByte() != 0;
+        isRetweeted = in.readByte() != 0;
+        favoriteCount = in.readInt();
+        inReplyToScreenName = in.readString();
+        geoLocation = in.readParcelable(GeoLocation.class.getClassLoader());
+        place = in.readParcelable(PlaceJSONImpl.class.getClassLoader());
+        retweetCount = in.readInt();
+        isPossiblySensitive = in.readByte() != 0;
+        isoLanguageCode = in.readString();
+        contributorsIDs = in.createLongArray();
+        retweetedStatus = in.readParcelable(StatusJSONImpl.class.getClassLoader());
+        userMentionEntities = (UserMentionEntity[]) in.readParcelableArray(UserMentionEntityJSONImpl.class.getClassLoader());
+        urlEntities = (URLEntity[]) in.readParcelableArray(URLEntityJSONImpl.class.getClassLoader());
+        hashtagEntities = (HashtagEntity[]) in.readParcelableArray(HashtagEntityJSONImpl.class.getClassLoader());
+        mediaEntities = (MediaEntity[]) in.readParcelableArray(MediaEntityJSONImpl.class.getClassLoader());
+        symbolEntities = (SymbolEntity[]) in.readParcelableArray(SymbolEntity.class.getClassLoader());
+        currentUserRetweetId = in.readLong();
     }
 }

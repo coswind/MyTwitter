@@ -16,13 +16,15 @@
 
 package twitter4j;
 
+import android.os.Parcelable;
+
 /**
  * A data interface representing one single URL entity.
  *
  * @author Mocel - mocel at guma.jp
  * @since Twitter4J 2.1.9
  */
-public interface URLEntity extends TweetEntity, java.io.Serializable {
+public interface URLEntity extends TweetEntity, java.io.Serializable, Parcelable {
 
     /**
      * Returns the URL mentioned in the tweet.<br>

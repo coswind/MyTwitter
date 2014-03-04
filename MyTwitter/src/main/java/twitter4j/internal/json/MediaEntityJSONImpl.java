@@ -15,6 +15,9 @@
  */
 package twitter4j.internal.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import twitter4j.MediaEntity;
 import twitter4j.TwitterException;
 import twitter4j.internal.org.json.JSONArray;
@@ -23,6 +26,7 @@ import twitter4j.internal.org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static twitter4j.internal.json.z_T4JInternalParseUtil.getLong;
 
@@ -165,6 +169,53 @@ public class MediaEntityJSONImpl extends EntityIndex implements MediaEntity {
         return super.getEnd();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<MediaEntityJSONImpl> CREATOR = new Creator<MediaEntityJSONImpl>() {
+
+        @Override
+        public MediaEntityJSONImpl createFromParcel(Parcel source) {
+            return new MediaEntityJSONImpl(source);
+        }
+
+        @Override
+        public MediaEntityJSONImpl[] newArray(int size) {
+            return new MediaEntityJSONImpl[size];
+        }
+    };
+
+    MediaEntityJSONImpl(Parcel source) {
+        id = source.readLong();
+        url = source.readString();
+        mediaURL = source.readString();
+        expandedURL = source.readString();
+        displayURL = source.readString();
+        final int N = source.readInt();
+        for (int i = 0; i < N; i++) {
+            sizes.put(source.readInt(), (MediaEntity.Size) source.readParcelable(Size.class.getClassLoader()));
+        }
+        type = source.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(url);
+        dest.writeString(mediaURL);
+        dest.writeString(expandedURL);
+        dest.writeString(displayURL);
+        dest.writeInt(sizes.size());
+        Set<Integer> set = sizes.keySet();
+        for (Integer key : set) {
+            dest.writeInt(key);
+            dest.writeParcelable(sizes.get(key), flags);
+        }
+        dest.writeString(type);
+    }
+
     static class Size implements MediaEntity.Size {
         private static final long serialVersionUID = 8681853416159361581L;
         int width;
@@ -221,6 +272,37 @@ public class MediaEntityJSONImpl extends EntityIndex implements MediaEntity {
                     ", height=" + height +
                     ", resize=" + resize +
                     '}';
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Parcelable.Creator<Size> CREATOR = new Creator<Size>() {
+
+            @Override
+            public Size createFromParcel(Parcel source) {
+                return new Size(source);
+            }
+
+            @Override
+            public Size[] newArray(int size) {
+                return new Size[size];
+            }
+        };
+
+        Size(Parcel source) {
+            width = source.readInt();
+            height = source.readInt();
+            resize = source.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(width);
+            dest.writeInt(height);
+            dest.writeInt(resize);
         }
     }
 

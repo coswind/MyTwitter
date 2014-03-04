@@ -16,13 +16,15 @@
 
 package twitter4j;
 
+import android.os.Parcelable;
+
 /**
  * A data interface representing one single Hashtag entity.
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.9
  */
-public interface HashtagEntity extends TweetEntity, java.io.Serializable {
+public interface HashtagEntity extends TweetEntity, java.io.Serializable, Parcelable {
     /**
      * Returns the text of the hashtag without #.
      *

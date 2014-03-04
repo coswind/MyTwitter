@@ -16,6 +16,9 @@
 
 package twitter4j.internal.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import twitter4j.TwitterException;
 import twitter4j.UserMentionEntity;
 import twitter4j.internal.org.json.JSONArray;
@@ -122,7 +125,6 @@ import twitter4j.internal.org.json.JSONObject;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
         UserMentionEntityJSONImpl that = (UserMentionEntityJSONImpl) o;
 
@@ -148,5 +150,36 @@ import twitter4j.internal.org.json.JSONObject;
                 ", screenName='" + screenName + '\'' +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<UserMentionEntityJSONImpl> CREATOR = new Creator<UserMentionEntityJSONImpl>() {
+
+        @Override
+        public UserMentionEntityJSONImpl createFromParcel(Parcel source) {
+            return new UserMentionEntityJSONImpl(source);
+        }
+
+        @Override
+        public UserMentionEntityJSONImpl[] newArray(int size) {
+            return new UserMentionEntityJSONImpl[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(screenName);
+        dest.writeLong(id);
+    }
+
+    UserMentionEntityJSONImpl(Parcel source) {
+        name = source.readString();
+        screenName = source.readString();
+        id = source.readLong();
     }
 }
