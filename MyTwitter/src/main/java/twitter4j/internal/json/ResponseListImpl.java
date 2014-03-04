@@ -26,10 +26,12 @@ import java.util.ArrayList;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.3
  */
-class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
+public class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
     private transient RateLimitStatus rateLimitStatus = null;
     private transient int accessLevel;
     private static final long serialVersionUID = 5646617841989265312L;
+
+    public ResponseListImpl() {}
 
     ResponseListImpl(HttpResponse res) {
         super();

@@ -19,24 +19,39 @@ package twitter4j.internal.json;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import twitter4j.*;
+import java.util.Arrays;
+import java.util.Date;
+
+import twitter4j.GeoLocation;
+import twitter4j.HashtagEntity;
+import twitter4j.MediaEntity;
+import twitter4j.Place;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.SymbolEntity;
+import twitter4j.TwitterException;
+import twitter4j.URLEntity;
+import twitter4j.User;
+import twitter4j.UserMentionEntity;
 import twitter4j.conf.Configuration;
 import twitter4j.internal.http.HttpResponse;
 import twitter4j.internal.org.json.JSONArray;
 import twitter4j.internal.org.json.JSONException;
 import twitter4j.internal.org.json.JSONObject;
 
-import java.util.Arrays;
-import java.util.Date;
-
-import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
+import static twitter4j.internal.json.z_T4JInternalParseUtil.getBoolean;
+import static twitter4j.internal.json.z_T4JInternalParseUtil.getDate;
+import static twitter4j.internal.json.z_T4JInternalParseUtil.getInt;
+import static twitter4j.internal.json.z_T4JInternalParseUtil.getLong;
+import static twitter4j.internal.json.z_T4JInternalParseUtil.getRawString;
+import static twitter4j.internal.json.z_T4JInternalParseUtil.getUnescapedString;
 
 /**
  * A data class representing one single status of a user.
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-/*package*/ final class StatusJSONImpl extends TwitterResponseImpl implements Status, java.io.Serializable, Parcelable {
+/*package*/ public final class StatusJSONImpl extends TwitterResponseImpl implements Status, java.io.Serializable, Parcelable {
     private static final long serialVersionUID = 7548618898682727465L;
 
     private Date createdAt;
@@ -67,6 +82,17 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
     private SymbolEntity[] symbolEntities;
     private long currentUserRetweetId = -1L;
 
+    //Add By Coswind.
+    private JSONObject json;
+
+    public JSONObject getJson() {
+        return json;
+    }
+
+    public void setJson(JSONObject json) {
+        this.json = json;
+    }
+
     /*package*/StatusJSONImpl(HttpResponse res, Configuration conf) throws TwitterException {
         super(res);
         JSONObject json = res.asJSONObject();
@@ -85,7 +111,7 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
         }
     }
 
-    /*package*/ StatusJSONImpl(JSONObject json) throws TwitterException {
+    /*package*/public StatusJSONImpl(JSONObject json) throws TwitterException {
         super();
         init(json);
     }
@@ -96,6 +122,7 @@ import static twitter4j.internal.json.z_T4JInternalParseUtil.*;
     }
 
     private void init(JSONObject json) throws TwitterException {
+        this.json = json;
         id = getLong("id", json);
         source = getUnescapedString("source", json);
         createdAt = getDate("created_at", json);

@@ -37,6 +37,18 @@ import twitter4j.internal.org.json.JSONObject;
     private String screenName;
     private long id;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     /* package */ UserMentionEntityJSONImpl(JSONObject json) throws TwitterException {
         super();
         init(json);

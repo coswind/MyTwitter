@@ -1,8 +1,10 @@
 package io.github.coswind.mytwitter.fragment;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +20,13 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
-import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.adapter.TimeLineAdapter;
 import io.github.coswind.mytwitter.api.GetHomeTimeLineTask;
+import io.github.coswind.mytwitter.constant.TwitterConstants;
+import io.github.coswind.mytwitter.dao.DaoMaster;
+import io.github.coswind.mytwitter.dao.StatusDao;
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
-import io.github.coswind.mytwitter.utils.DisplayUtils;
 import io.github.coswind.mytwitter.utils.LogUtils;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -32,9 +35,11 @@ import twitter4j.Twitter;
 import twitter4j.auth.AccessToken;
 import twitter4j.internal.http.HttpClient;
 import twitter4j.internal.http.HttpClientFactory;
-import twitter4j.internal.http.HttpParameter;
 import twitter4j.internal.http.HttpRequest;
 import twitter4j.internal.http.RequestMethod;
+import twitter4j.internal.json.ResponseListImpl;
+import twitter4j.internal.json.StatusJSONImpl;
+import twitter4j.internal.org.json.JSONObject;
 
 /**
  * Created by coswind on 14-2-13.
@@ -51,6 +56,9 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
 
     public final static int FROM_TOP = 0;
     public final static int FROM_BOTTOM = 1;
+
+    private SQLiteDatabase sqLiteDatabase;
+    private StatusDao statusDao;
 
     private int listViewPaddingTop;
 
@@ -70,33 +78,68 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        listViewPaddingTop = getResources().getDimensionPixelSize(R.dimen.padding_1);
+        SQLiteOpenHelper sqLiteOpenHelper = MyApplication.getInstance(getActivity()).getSqLiteOpenHelper();
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+        statusDao = new DaoMaster(sqLiteDatabase).newSession().getStatusDao();
 
-        new AsyncTask<Void, Void, Void>() {
+        init();
+    }
+
+    private ResponseList<Status> getResponseListStatus() {
+        ResponseList<Status> statuses = new ResponseListImpl<Status>();
+        Cursor cursor = sqLiteDatabase.query(statusDao.getTablename(), statusDao.getAllColumns(), null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                io.github.coswind.mytwitter.dao.Status status = statusDao.readEntity(cursor, 0);
+                try {
+                    statuses.add(new StatusJSONImpl(new JSONObject(status.getJsonString())));
+                } catch (Exception e) {
+                    LogUtils.d("add error: " + e);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        return statuses;
+    }
+
+    private void init() {
+        new AsyncTask<Void, Void, ResponseList<Status>>() {
             @Override
-            protected Void doInBackground(Void... params) {
-                init();
-                return null;
+            protected ResponseList<twitter4j.Status> doInBackground(Void... params) {
+                initTwitter();
+                ResponseList<twitter4j.Status> statuses = getResponseListStatus();
+                return statuses;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
+            protected void onPostExecute(ResponseList<twitter4j.Status> statuses) {
+                super.onPostExecute(statuses);
                 timeLineAdapter = new TimeLineAdapter(getActivity());
                 listView.setAdapter(timeLineAdapter);
-                onRefreshingUp();
+                if (statuses.size() == 0) {
+                    onRefreshingUp();
+                } else {
+                    latestStatus = statuses.get(0);
+                    if (oldestStatus == null) {
+                        oldestStatus = statuses.get(statuses.size() - 1);
+                    }
+                    timeLineAdapter.setStatuses(statuses);
+                    timeLineAdapter.notifyDataSetChanged();
+                }
             }
         }.execute();
     }
 
     private void initView(View view) {
         listView = (ListView) view.findViewById(R.id.list_view);
+        listViewPaddingTop = listView.getPaddingTop();
         setListView(listView);
         setUpProgressBar((SmoothProgressBar) view.findViewById(R.id.ptr_progress_up));
         setBottomProgressBar((SmoothProgressBar) view.findViewById(R.id.ptr_progress_bottom));
     }
 
-    private void init() {
+    private void initTwitter() {
         Account account = MyApplication.getInstance(getActivity()).getAccount();
         if (account == null) {
             // TODO
@@ -152,6 +195,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
         } else if (statusCount == 0) {
             Crouton.makeText(getActivity(), "No Tweets.", Style.ALERT).show();
         } else {
+            storeStatusList(statuses);
             Configuration.Builder builder = new Configuration.Builder();
             ResponseList<Status> oldStatuses = timeLineAdapter.getStatuses();
             int scrollOffset = 0;
@@ -162,7 +206,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
                         scrollOffset = firstView.getTop() - listViewPaddingTop;
                     }
                 }
-
                 latestStatus = statuses.get(0);
                 if (oldStatuses != null) {
                     statuses.addAll(oldStatuses);
@@ -185,7 +228,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
                     .setConfiguration(builder.build()).show();
             timeLineAdapter.setStatuses(statuses);
             timeLineAdapter.notifyDataSetChanged();
-
             if (type == FROM_TOP && oldStatuses != null && oldStatuses.size() > 0 && statusCount > 0) {
                 listView.setSelectionFromTop(statusCount, scrollOffset);
             }
@@ -195,6 +237,15 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
         } else if (type == FROM_BOTTOM) {
             onRefreshingBottomEnd();
         }
+    }
+
+    private void storeStatusList(ResponseList<Status> statuses) {
+        ArrayList<io.github.coswind.mytwitter.dao.Status> statusList = new ArrayList<io.github.coswind.mytwitter.dao.Status>();
+        for (Status status : statuses) {
+            statusList.add(new io.github.coswind.mytwitter.dao.Status(status.getId(), status.getJson().toString()));
+        }
+
+        statusDao.insertInTx(statusList);
     }
 
     @Override

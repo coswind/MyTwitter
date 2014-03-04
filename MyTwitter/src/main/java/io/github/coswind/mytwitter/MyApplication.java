@@ -3,6 +3,7 @@ package io.github.coswind.mytwitter;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -13,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.coswind.mytwitter.constant.TwitterConstants;
+import io.github.coswind.mytwitter.dao.DaoMaster;
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
@@ -27,6 +29,7 @@ public class MyApplication extends Application {
     private Twitter twitter;
     private ImageLoaderWrapper imageLoaderWrapper;
     private Set<Activity> activitySet = Collections.synchronizedSet(new HashSet<Activity>());
+    private SQLiteOpenHelper sqLiteOpenHelper;
 
     @Override
     public void onCreate() {
@@ -69,6 +72,13 @@ public class MyApplication extends Application {
         }
 
         return imageLoaderWrapper;
+    }
+
+    public SQLiteOpenHelper getSqLiteOpenHelper() {
+        if (sqLiteOpenHelper == null) {
+            sqLiteOpenHelper = new DaoMaster.DevOpenHelper(this, "twitter", null);
+        }
+        return sqLiteOpenHelper;
     }
 
     public void addActivity(Activity activity) {

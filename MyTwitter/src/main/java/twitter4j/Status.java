@@ -20,6 +20,8 @@ import android.os.Parcelable;
 
 import java.util.Date;
 
+import twitter4j.internal.org.json.JSONObject;
+
 /**
  * A data interface representing one single status of a user.
  *
@@ -199,4 +201,8 @@ public interface Status extends Comparable<Status>, TwitterResponse,
     void setRetweetedByMe(boolean isRetweeted);
 
     void setFavorite(boolean isFavorite);
+
+    public JSONObject getJson();
+
+    public void setJson(JSONObject json);
 }
