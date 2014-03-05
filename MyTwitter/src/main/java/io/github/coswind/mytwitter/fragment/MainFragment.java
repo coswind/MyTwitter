@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.alibaba.fastjson.JSON;
 
@@ -49,6 +52,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     private Twitter twitter;
 
     private ListView listView;
+    private ProgressBar progressBar;
     private TimeLineAdapter timeLineAdapter;
 
     private Status latestStatus;
@@ -87,8 +91,8 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
 
     private ResponseList<Status> getResponseListStatus() {
         ResponseList<Status> statuses = new ResponseListImpl<Status>();
-        Cursor cursor = sqLiteDatabase.query(statusDao.getTablename(), statusDao.getAllColumns(), null, null, null, null, null);
-
+        Cursor cursor = sqLiteDatabase.query(statusDao.getTablename(), statusDao.getAllColumns(),
+                null, null, null, null, StatusDao.Properties.Status_id.columnName + " DESC");
         if (cursor.moveToFirst()) {
             do {
                 io.github.coswind.mytwitter.dao.Status status = statusDao.readEntity(cursor, 0);
@@ -99,7 +103,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
                 }
             } while (cursor.moveToNext());
         }
-
         return statuses;
     }
 
@@ -107,6 +110,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
         new AsyncTask<Void, Void, ResponseList<Status>>() {
             @Override
             protected ResponseList<twitter4j.Status> doInBackground(Void... params) {
+                progressBar.setVisibility(View.VISIBLE);
                 initTwitter();
                 ResponseList<twitter4j.Status> statuses = getResponseListStatus();
                 return statuses;
@@ -114,6 +118,19 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
 
             @Override
             protected void onPostExecute(ResponseList<twitter4j.Status> statuses) {
+                AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+                alphaAnimation.setDuration(500);
+                alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
+                progressBar.startAnimation(alphaAnimation);
                 super.onPostExecute(statuses);
                 timeLineAdapter = new TimeLineAdapter(getActivity());
                 listView.setAdapter(timeLineAdapter);
@@ -133,6 +150,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
 
     private void initView(View view) {
         listView = (ListView) view.findViewById(R.id.list_view);
+        progressBar = (ProgressBar) view.findViewById(R.id.ptr_progress_center);
         listViewPaddingTop = listView.getPaddingTop();
         setListView(listView);
         setUpProgressBar((SmoothProgressBar) view.findViewById(R.id.ptr_progress_up));
@@ -152,8 +170,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
         }
 
         AccessToken accessToken = account.getAccessToken();
-        httpClient = HttpClientFactory.getInstance(TwitterConstants.configuration);
-
         MyApplication myApplication = MyApplication.getInstance(getActivity());
 
         twitter = myApplication.getTwitter();
