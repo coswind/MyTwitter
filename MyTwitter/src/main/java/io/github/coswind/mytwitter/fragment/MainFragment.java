@@ -26,13 +26,14 @@ import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.adapter.TimeLineAdapter;
 import io.github.coswind.mytwitter.api.GetHomeTimeLineTask;
+import io.github.coswind.mytwitter.constant.CacheConstants;
 import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.dao.DaoMaster;
 import io.github.coswind.mytwitter.dao.StatusDao;
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
 import io.github.coswind.mytwitter.utils.LogUtils;
-import io.github.coswind.mytwitter.widget.PullToRefreshLayout;
+import io.github.coswind.mytwitter.layout.PullToRefreshLayout;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -214,11 +215,11 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         } else if (statusCount == 0) {
             Crouton.makeText(getActivity(), "No Tweets.", Style.ALERT).show();
         } else {
-            storeStatusList(statuses);
             Configuration.Builder builder = new Configuration.Builder();
             ResponseList<Status> oldStatuses = timeLineAdapter.getStatuses();
             int scrollOffset = 0;
             if (type == FROM_TOP) {
+                storeStatusListFromTop(statuses, oldStatuses);
                 if (listView.getChildCount() > 0) {
                     final View firstView = listView.getChildAt(0);
                     if (firstView != null) {
@@ -233,6 +234,7 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
                     oldestStatus = statuses.get(statusCount - 1);
                 }
             } else if (type == FROM_BOTTOM) {
+                storeStatusListFromBottom(statuses, oldStatuses);
                 oldestStatus = statuses.get(statusCount - 1);
                 if (oldStatuses != null) {
                     oldStatuses.addAll(statuses);
@@ -258,12 +260,34 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         }
     }
 
-    private void storeStatusList(ResponseList<Status> statuses) {
+    private void storeStatusListFromTop(ResponseList<Status> statuses, ResponseList<Status> oldStatus) {
         ArrayList<io.github.coswind.mytwitter.dao.Status> statusList = new ArrayList<io.github.coswind.mytwitter.dao.Status>();
         for (Status status : statuses) {
             statusList.add(new io.github.coswind.mytwitter.dao.Status(status.getId(), status.getJson().toString()));
         }
 
+        statusDao.insertInTx(statusList);
+        if (oldestStatus == null) { return; }
+        int insertCount = statuses.size();
+        int primaryCount = oldStatus.size();
+        if (primaryCount + insertCount > CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT) {
+            sqLiteDatabase.delete(statusDao.getTablename(), StatusDao.Properties.Status_id.columnName + "<?",
+                    new String[]{String.valueOf(oldStatus.get(
+                            CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT - insertCount).getId())});
+        }
+    }
+
+    private void storeStatusListFromBottom(ResponseList<Status> statuses, ResponseList<Status> oldStatuses) {
+        if (oldestStatus == null) { return; }
+        int truncatedCount = CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT - oldStatuses.size();
+        if (truncatedCount < 0) {
+            return;
+        }
+        ArrayList<io.github.coswind.mytwitter.dao.Status> statusList = new ArrayList<io.github.coswind.mytwitter.dao.Status>();
+        for (int i = 0, len = Math.min(truncatedCount, statuses.size()); i < len; i++) {
+            Status status = statuses.get(i);
+            statusList.add(new io.github.coswind.mytwitter.dao.Status(status.getId(), status.getJson().toString()));
+        }
         statusDao.insertInTx(statusList);
     }
 

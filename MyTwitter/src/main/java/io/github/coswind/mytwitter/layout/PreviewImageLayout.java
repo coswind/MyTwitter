@@ -1,4 +1,4 @@
-package io.github.coswind.mytwitter.widget;
+package io.github.coswind.mytwitter.layout;
 
 import android.content.Context;
 import android.util.AttributeSet;

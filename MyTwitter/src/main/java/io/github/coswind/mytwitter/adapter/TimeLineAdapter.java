@@ -28,8 +28,6 @@ import io.github.coswind.mytwitter.api.ReTweetTask;
 import io.github.coswind.mytwitter.constant.ColorConstants;
 import io.github.coswind.mytwitter.layout.CardLinearLayout;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
-import io.github.coswind.mytwitter.utils.LogUtils;
-import io.github.coswind.mytwitter.widget.PreviewImageLayout;
 import twitter4j.MediaEntity;
 import twitter4j.ResponseList;
 import twitter4j.Status;

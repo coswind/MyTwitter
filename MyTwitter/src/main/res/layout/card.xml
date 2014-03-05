@@ -75,7 +75,7 @@
         android:layout_height="1.0px"
         android:background="#40808080" />
 
-    <io.github.coswind.mytwitter.widget.PreviewImageLayout
+    <io.github.coswind.mytwitter.layout.PreviewImageLayout
         android:id="@+id/preview_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/padding_2" />
 
-    </io.github.coswind.mytwitter.widget.PreviewImageLayout>
+    </io.github.coswind.mytwitter.layout.PreviewImageLayout>
 
     <io.github.coswind.mytwitter.widget.ThemedTextView
         android:id="@+id/text_view"

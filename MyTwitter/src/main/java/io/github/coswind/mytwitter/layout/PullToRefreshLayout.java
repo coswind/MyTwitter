@@ -1,4 +1,4 @@
-package io.github.coswind.mytwitter.widget;
+package io.github.coswind.mytwitter.layout;
 
 import android.content.Context;
 import android.graphics.drawable.ClipDrawable;
@@ -173,12 +173,10 @@ public class PullToRefreshLayout extends FrameLayout {
         if (isDragFromUp) {
             if (y - initialMotionY > MAX_PULL_DISTANCE) {
                 onRefreshingUp();
-                pullRefreshListener.onRefreshingUp();
             }
         } else if (isDragFromBottom) {
             if (initialMotionY - y > MAX_PULL_DISTANCE) {
                 onRefreshingBottom();
-                pullRefreshListener.onRefreshingBottom();
             }
         }
     }
@@ -247,6 +245,7 @@ public class PullToRefreshLayout extends FrameLayout {
             this.upProgressBar.setIndeterminate(true);
             this.upProgressBar.setVisibility(View.VISIBLE);
         }
+        pullRefreshListener.onRefreshingUp();
     }
 
     public void onRefreshingBottom() {
@@ -256,6 +255,7 @@ public class PullToRefreshLayout extends FrameLayout {
             this.bottomProgressBar.setIndeterminate(true);
             this.bottomProgressBar.setVisibility(View.VISIBLE);
         }
+        pullRefreshListener.onRefreshingBottom();
     }
 
     public void setOnPullRefreshListener(PullRefreshListener pullRefreshListener) {
