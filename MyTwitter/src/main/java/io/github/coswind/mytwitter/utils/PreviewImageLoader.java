@@ -18,7 +18,6 @@ public class PreviewImageLoader implements ImageLoadingListener, ImageLoadingPro
 
     @Override
     public void onLoadingStarted(String imageUri, View view) {
-        LogUtils.d("onLoadingStarted: " + imageUri);
         progressBar = getProgressBar(view);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(true);
@@ -27,28 +26,24 @@ public class PreviewImageLoader implements ImageLoadingListener, ImageLoadingPro
 
     @Override
     public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-        LogUtils.d("onLoadingFailed: " + imageUri);
         progressBar = getProgressBar(view);
         progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-        LogUtils.d("onLoadingComplete: " + imageUri);
         progressBar = getProgressBar(view);
         progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onLoadingCancelled(String imageUri, View view) {
-        LogUtils.d("onLoadingCancelled: " + imageUri);
         progressBar = getProgressBar(view);
         progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onProgressUpdate(String imageUri, View view, int current, int total) {
-        LogUtils.d("onProgressUpdate: " + imageUri + " progress: " + (100 * current / total));
         if (total == 0) { return;}
         progressBar = getProgressBar(view);
         progressBar.setIndeterminate(false);

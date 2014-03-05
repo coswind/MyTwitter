@@ -1,5 +1,6 @@
 package io.github.coswind.mytwitter.fragment;
 
+import android.app.Fragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -31,6 +32,7 @@ import io.github.coswind.mytwitter.dao.StatusDao;
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
 import io.github.coswind.mytwitter.utils.LogUtils;
+import io.github.coswind.mytwitter.widget.PullToRefreshLayout;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -47,12 +49,13 @@ import twitter4j.internal.org.json.JSONObject;
 /**
  * Created by coswind on 14-2-13.
  */
-public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLineTask.HomeTimeLineCallback {
+public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTimeLineCallback, PullToRefreshLayout.PullRefreshListener {
     private HttpClient httpClient;
     private Twitter twitter;
 
     private ListView listView;
     private ProgressBar progressBar;
+    private PullToRefreshLayout pullToRefreshLayout;
     private TimeLineAdapter timeLineAdapter;
 
     private Status latestStatus;
@@ -135,7 +138,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
                 timeLineAdapter = new TimeLineAdapter(getActivity());
                 listView.setAdapter(timeLineAdapter);
                 if (statuses.size() == 0) {
-                    onRefreshingUp();
+                    pullToRefreshLayout.onRefreshingUp();
                 } else {
                     latestStatus = statuses.get(0);
                     if (oldestStatus == null) {
@@ -152,9 +155,11 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
         listView = (ListView) view.findViewById(R.id.list_view);
         progressBar = (ProgressBar) view.findViewById(R.id.ptr_progress_center);
         listViewPaddingTop = listView.getPaddingTop();
-        setListView(listView);
-        setUpProgressBar((SmoothProgressBar) view.findViewById(R.id.ptr_progress_up));
-        setBottomProgressBar((SmoothProgressBar) view.findViewById(R.id.ptr_progress_bottom));
+        pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.pull_refresh_layout);
+        pullToRefreshLayout.setListView(listView);
+        pullToRefreshLayout.setUpProgressBar((SmoothProgressBar) view.findViewById(R.id.ptr_progress_up));
+        pullToRefreshLayout.setBottomProgressBar((SmoothProgressBar) view.findViewById(R.id.ptr_progress_bottom));
+        pullToRefreshLayout.setOnPullRefreshListener(this);
     }
 
     private void initTwitter() {
@@ -247,9 +252,9 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
             }
         }
         if (type == FROM_TOP) {
-            onRefreshUpEnd();
+            pullToRefreshLayout.onRefreshUpEnd();
         } else if (type == FROM_BOTTOM) {
-            onRefreshingBottomEnd();
+            pullToRefreshLayout.onRefreshingBottomEnd();
         }
     }
 
@@ -263,8 +268,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     }
 
     @Override
-    protected void onRefreshingUp() {
-        super.onRefreshingUp();
+    public void onRefreshingUp() {
         Paging paging = new Paging();
         if (latestStatus != null) {
             paging.setSinceId(latestStatus.getId());
@@ -273,8 +277,7 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     }
 
     @Override
-    protected void onRefreshingBottom() {
-        super.onRefreshingBottom();
+    public void onRefreshingBottom() {
         Paging paging = new Paging();
         if (oldestStatus != null) {
             paging.setMaxId(oldestStatus.getId() - 1);

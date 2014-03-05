@@ -146,6 +146,7 @@ public class PullToRefreshFragment extends Fragment implements View.OnTouchListe
                 onReset();
                 break;
             case MotionEvent.ACTION_DOWN:
+                onReset();
                 if (!isRefreshingUp && isReadyForPullFromTop()) {
                     initialMotionX = x;
                     initialMotionY = y;
