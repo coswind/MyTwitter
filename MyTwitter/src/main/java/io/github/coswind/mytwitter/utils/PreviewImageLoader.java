@@ -2,19 +2,19 @@ package io.github.coswind.mytwitter.utils;
 
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingProgressListener;
 
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.github.coswind.mytwitter.R;
 
 /**
  * Created by coswind on 14-3-5.
  */
 public class PreviewImageLoader implements ImageLoadingListener, ImageLoadingProgressListener {
-    private SmoothProgressBar progressBar;
+    private ProgressBar progressBar;
 
     @Override
     public void onLoadingStarted(String imageUri, View view) {
@@ -55,9 +55,9 @@ public class PreviewImageLoader implements ImageLoadingListener, ImageLoadingPro
         progressBar.setProgress(100 * current / total);
     }
 
-    private SmoothProgressBar getProgressBar(View view) {
+    private ProgressBar getProgressBar(View view) {
         if (progressBar == null) {
-            progressBar = (SmoothProgressBar) ((View) view.getParent()).findViewById(R.id.ptr_progress_preview);
+            progressBar = (ProgressBar) ((View) view.getParent()).findViewById(R.id.ptr_progress_preview);
         }
 
         return progressBar;

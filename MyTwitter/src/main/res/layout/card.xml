@@ -87,9 +87,9 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
-        <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        <ProgressBar
             android:id="@+id/ptr_progress_preview"
-            style="@style/Widget.ProgressBar.PullToRefresh"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
