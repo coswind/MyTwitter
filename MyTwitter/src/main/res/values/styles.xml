@@ -16,7 +16,7 @@
 -->
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.HoloAccent.Light">
         <!-- Customize your theme here. -->
         <item name="android:colorBackgroundCacheHint">@color/lightest_gray</item>
         <item name="android:windowBackground">@color/lightest_gray</item>

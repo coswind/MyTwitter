@@ -1,6 +1,7 @@
 package io.github.coswind.mytwitter.adapter;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,9 +26,13 @@ import io.github.coswind.mytwitter.api.ReTweetTask;
 import io.github.coswind.mytwitter.constant.ColorConstants;
 import io.github.coswind.mytwitter.layout.CardLinearLayout;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
+import io.github.coswind.mytwitter.utils.LogUtils;
+import io.github.coswind.mytwitter.widget.PreviewImageLayout;
+import twitter4j.MediaEntity;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.URLEntity;
 import twitter4j.UserMentionEntity;
 
 /**
@@ -87,11 +92,13 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             viewHolder = new ViewHolder();
             viewHolder.cardLinearLayout = (CardLinearLayout) convertView.findViewById(R.id.layout);
             viewHolder.text = (TextView) convertView.findViewById(R.id.text_view);
-            viewHolder.profileImage = (ImageView) convertView.findViewById(R.id.image_view);
+            viewHolder.profileImage = (ImageView) convertView.findViewById(R.id.profile_image);
             viewHolder.name = (TextView) convertView.findViewById(R.id.name);
             viewHolder.screenName = (TextView) convertView.findViewById(R.id.screenName);
             viewHolder.time = (TextView) convertView.findViewById(R.id.time);
             viewHolder.rightStatus = (TextView) convertView.findViewById(R.id.right_status);
+            viewHolder.previewImageLayout = convertView.findViewById(R.id.preview_layout);
+            viewHolder.previewImage = (ImageView) convertView.findViewById(R.id.image_view);
             viewHolder.overflowImage = (ImageView) convertView.findViewById(R.id.ellipsis);
             viewHolder.overflowImage.setOnClickListener(this);
             convertView.setTag(viewHolder);
@@ -131,12 +138,32 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             viewHolder.rightStatus.setVisibility(View.GONE);
         }
 
+        String previewUrl = getPreviewUrl(realStatus);
+        if (TextUtils.isEmpty(previewUrl)) {
+            viewHolder.previewImageLayout.setVisibility(View.GONE);
+        } else {
+            viewHolder.previewImageLayout.setVisibility(View.VISIBLE);
+            imageLoaderWrapper.displayPreviewImage(viewHolder.previewImage, previewUrl);
+        }
+
         if (position > maxAnimationPosition) {
             convertView.startAnimation(viewHolder.animationSet);
             maxAnimationPosition = position;
         }
 
         return convertView;
+    }
+
+    private String getPreviewUrl(Status status) {
+        MediaEntity[] mediaEntities = status.getMediaEntities();
+        if (mediaEntities.length > 0 && !TextUtils.isEmpty(mediaEntities[0].getMediaURLHttps())) {
+            return mediaEntities[0].getMediaURLHttps();
+        }
+        URLEntity[] urlEntities = status.getURLEntities();
+        if (urlEntities.length > 0 && !TextUtils.isEmpty(urlEntities[0].getExpandedURL())) {
+            return urlEntities[0].getExpandedURL();
+        }
+        return null;
     }
 
     private String getInReplyName(Status status) {
@@ -236,6 +263,8 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         TextView name;
         TextView time;
         TextView rightStatus;
+        View previewImageLayout;
+        ImageView previewImage;
 
         AnimationSet animationSet;
 

@@ -13,7 +13,7 @@
         android:padding="@dimen/padding_2">
 
         <ImageView
-            android:id="@+id/image_view"
+            android:id="@+id/profile_image"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_marginRight="@dimen/padding_2" />
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/icon_size_half"
             android:layout_toLeftOf="@id/icon_layout"
-            android:layout_toRightOf="@id/image_view"
+            android:layout_toRightOf="@id/profile_image"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
@@ -62,7 +62,7 @@
             android:layout_height="@dimen/icon_size_half"
             android:layout_below="@id/name"
             android:layout_toLeftOf="@id/time"
-            android:layout_toRightOf="@id/image_view"
+            android:layout_toRightOf="@id/profile_image"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:textColor="?android:attr/textColorSecondary"
@@ -74,6 +74,28 @@
         android:layout_width="match_parent"
         android:layout_height="1.0px"
         android:background="#40808080" />
+
+    <io.github.coswind.mytwitter.widget.PreviewImageLayout
+        android:id="@+id/preview_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+            android:id="@+id/ptr_progress_preview"
+            style="@style/Widget.ProgressBar.PullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/padding_2" />
+
+    </io.github.coswind.mytwitter.widget.PreviewImageLayout>
 
     <io.github.coswind.mytwitter.widget.ThemedTextView
         android:id="@+id/text_view"

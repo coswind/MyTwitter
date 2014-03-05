@@ -1,12 +1,13 @@
 package io.github.coswind.mytwitter;
 
-import android.app.Activity;
 import android.os.Bundle;
+
+import com.negusoft.holoaccent.activity.AccentActivity;
 
 /**
  * Created by coswind on 14-3-3.
  */
-public class BaseActivity extends Activity {
+public class BaseActivity extends AccentActivity {
     private boolean isVisible;
 
     @Override

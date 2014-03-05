@@ -39,6 +39,11 @@ public class ImageLoaderWrapper {
         imageDisplayOptions = imageOptsBuilder.build();
     }
 
+    public void displayPreviewImage(ImageView view, String url) {
+        PreviewImageLoader previewImageLoader = new PreviewImageLoader();
+        imageLoader.displayImage(url, view, imageDisplayOptions, previewImageLoader, previewImageLoader);
+    }
+
     public void displayProfileImage(ImageView view, String url) {
         imageLoader.displayImage(url, view, profileImageDisplayOptions);
     }

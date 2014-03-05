@@ -160,15 +160,14 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     private void initTwitter() {
         Account account = MyApplication.getInstance(getActivity()).getAccount();
         if (account == null) {
-            // TODO
             try {
                 account = signIn();
-                AccountSpUtils.getInstance().setAccount(getActivity(), account);
             } catch (Exception e) {
-                e.printStackTrace();
+                LogUtils.d("signIn error: " + e);
             }
         }
 
+        AccountSpUtils.getInstance().setAccount(getActivity(), account);
         AccessToken accessToken = account.getAccessToken();
         MyApplication myApplication = MyApplication.getInstance(getActivity());
 
@@ -178,7 +177,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
 
     public void getHomeTimeLine(int type, Paging paging) {
         LogUtils.d("start get home time line.");
-
         GetHomeTimeLineTask getHomeTimeLineTask = new GetHomeTimeLineTask(twitter, this, type);
 
         if (paging == null) {
@@ -267,7 +265,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     @Override
     protected void onRefreshingUp() {
         super.onRefreshingUp();
-
         Paging paging = new Paging();
         if (latestStatus != null) {
             paging.setSinceId(latestStatus.getId());
@@ -278,7 +275,6 @@ public class MainFragment extends PullToRefreshFragment implements GetHomeTimeLi
     @Override
     protected void onRefreshingBottom() {
         super.onRefreshingBottom();
-
         Paging paging = new Paging();
         if (oldestStatus != null) {
             paging.setMaxId(oldestStatus.getId() - 1);
