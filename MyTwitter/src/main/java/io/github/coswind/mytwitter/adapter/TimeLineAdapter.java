@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.util.regex.Pattern;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import io.github.coswind.mytwitter.MyApplication;
@@ -39,6 +41,8 @@ import twitter4j.UserMentionEntity;
  * Created by coswind on 14-2-20.
  */
 public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItemClickListener, View.OnClickListener, ReTweetTask.ReTweetCallback, FavoriteTask.FavoriteCallback {
+    public final static Pattern IMAGES = Pattern.compile(".*\\.(png|jpeg|jpg|gif|bmp)");
+
     private ResponseList<Status> statuses;
 
     private LayoutInflater layoutInflater;
@@ -157,11 +161,17 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     private String getPreviewUrl(Status status) {
         MediaEntity[] mediaEntities = status.getMediaEntities();
         if (mediaEntities.length > 0 && !TextUtils.isEmpty(mediaEntities[0].getMediaURLHttps())) {
-            return mediaEntities[0].getMediaURLHttps();
+            String mediaUrl = mediaEntities[0].getMediaURLHttps();
+            if (IMAGES.matcher(mediaUrl).matches()) {
+                return mediaUrl;
+            }
         }
         URLEntity[] urlEntities = status.getURLEntities();
         if (urlEntities.length > 0 && !TextUtils.isEmpty(urlEntities[0].getExpandedURL())) {
-            return urlEntities[0].getExpandedURL();
+            String expandedUrl = urlEntities[0].getExpandedURL();
+            if (IMAGES.matcher(expandedUrl).matches()) {
+                return expandedUrl;
+            }
         }
         return null;
     }
