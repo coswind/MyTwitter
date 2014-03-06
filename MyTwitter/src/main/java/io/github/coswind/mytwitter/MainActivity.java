@@ -35,6 +35,8 @@ public class MainActivity extends BaseActivity {
         slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
         slidingMenu.setMenu(R.layout.left_sidebar);
         slidingMenu.setSecondaryMenu(R.layout.right_sidebar);
+
+        getActionBar().setDisplayOptions(0);
     }
 
     @Override

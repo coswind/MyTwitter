@@ -102,6 +102,8 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             viewHolder.previewImageLayout = convertView.findViewById(R.id.preview_layout);
             viewHolder.previewImage = (ImageView) convertView.findViewById(R.id.image_view);
             viewHolder.overflowImage = (ImageView) convertView.findViewById(R.id.ellipsis);
+            viewHolder.profileImage.setOnClickListener(this);
+            viewHolder.previewImage.setOnClickListener(this);
             viewHolder.overflowImage.setOnClickListener(this);
             convertView.setTag(viewHolder);
         } else {

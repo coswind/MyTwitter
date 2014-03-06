@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import com.negusoft.holoaccent.activity.AccentActivity;
 
+import io.github.coswind.mytwitter.utils.ThemeUtils;
+
 /**
  * Created by coswind on 14-3-3.
  */
@@ -14,6 +16,7 @@ public class BaseActivity extends AccentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyApplication.getInstance(this).addActivity(this);
+        getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
     }
 
     @Override

@@ -25,6 +25,5 @@ public class PreviewImageLayout extends FrameLayout {
         int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
         int hMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, hMeasureSpec);
-        setMeasuredDimension(width, height);
     }
 }

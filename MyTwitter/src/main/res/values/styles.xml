@@ -18,8 +18,16 @@
 
     <style name="AppTheme" parent="Theme.HoloAccent.Light">
         <!-- Customize your theme here. -->
+        <!-- Accent Colors -->
+        <item name="accentColor">#ff0099cc</item>
+        <item name="accentColorTranslucent">#660099cc</item>
         <item name="android:colorBackgroundCacheHint">@color/lightest_gray</item>
         <item name="android:windowBackground">@color/lightest_gray</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+    </style>
+
+    <style name="ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid">
+        <item name="android:background">@drawable/bg_actionbar</item>
     </style>
 
     <style name="Card">

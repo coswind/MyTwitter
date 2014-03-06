@@ -172,11 +172,9 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
                 LogUtils.d("signIn error: " + e);
             }
         }
-
         AccountSpUtils.getInstance().setAccount(getActivity(), account);
         AccessToken accessToken = account.getAccessToken();
         MyApplication myApplication = MyApplication.getInstance(getActivity());
-
         twitter = myApplication.getTwitter();
         twitter.setOAuthAccessToken(accessToken);
     }
@@ -184,7 +182,6 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     public void getHomeTimeLine(int type, Paging paging) {
         LogUtils.d("start get home time line.");
         GetHomeTimeLineTask getHomeTimeLineTask = new GetHomeTimeLineTask(twitter, this, type);
-
         if (paging == null) {
             getHomeTimeLineTask.execute();
         } else {
@@ -197,12 +194,10 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         HttpRequest request = new HttpRequest(RequestMethod.GET,
                 TwitterConstants.DIRECT_SIGN_IN_URL, null, null, null);
         String response = httpClient.request(request).asString();
-
         AccessToken accessToken = JSON.parseObject(response, AccessToken.class);
         LogUtils.d("accessToken: " + accessToken);
         Account account = new Account();
         account.setAccessToken(accessToken);
-
         return account;
     }
 
@@ -265,7 +260,6 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         for (Status status : statuses) {
             statusList.add(new io.github.coswind.mytwitter.dao.Status(status.getId(), status.getJson().toString()));
         }
-
         statusDao.insertInTx(statusList);
         if (oldestStatus == null) { return; }
         int insertCount = statuses.size();

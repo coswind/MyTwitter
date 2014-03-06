@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_2">
 
-        <ImageView
+        <io.github.coswind.mytwitter.widget.ForegroundImageView
             android:id="@+id/profile_image"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone">
 
-        <ImageView
+        <io.github.coswind.mytwitter.widget.ForegroundImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
