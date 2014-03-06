@@ -1,14 +1,19 @@
 package io.github.coswind.mytwitter;
 
-import android.app.Activity;
+import android.app.ActionBar;
+import android.app.Fragment;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
+import io.github.coswind.mytwitter.adapter.TabIconPagerAdapter;
 import io.github.coswind.mytwitter.fragment.MainFragment;
-import io.github.coswind.mytwitter.utils.LogUtils;
+import io.github.coswind.mytwitter.layout.IconPagerIndicator;
 
 public class MainActivity extends BaseActivity {
     private SlidingMenu slidingMenu;
@@ -18,15 +23,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new MainFragment())
-                    .commit();
-        }
-
         slidingMenu = new SlidingMenu(this);
         slidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         slidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         slidingMenu.setShadowDrawable(R.drawable.left_sidebar_shadow);
         slidingMenu.setSecondaryShadowDrawable(R.drawable.right_sidebar_shadow);
@@ -36,7 +34,31 @@ public class MainActivity extends BaseActivity {
         slidingMenu.setMenu(R.layout.left_sidebar);
         slidingMenu.setSecondaryMenu(R.layout.right_sidebar);
 
-        getActionBar().setDisplayOptions(0);
+        getActionBar().setCustomView(R.layout.custom_action_bar);
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setOffscreenPageLimit(4);
+        viewPager.setAdapter(new TabIconPagerAdapter(getFragmentManager()) {
+            @Override
+            public int getCount() {
+                return 4;
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                return new MainFragment();
+            }
+
+            @Override
+            public Drawable getIcon() {
+                return getResources().getDrawable(R.drawable.ic_tab_home);
+            }
+        });
+
+        View view = getActionBar().getCustomView();
+        IconPagerIndicator indicator = (IconPagerIndicator) view.findViewById(R.id.pager_indicator);
+        indicator.setViewPager(viewPager);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.github.coswind.mytwitter;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.negusoft.holoaccent.activity.AccentActivity;
 

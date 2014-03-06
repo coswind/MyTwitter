@@ -111,10 +111,10 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     }
 
     private void init() {
+        progressBar.setVisibility(View.VISIBLE);
         new AsyncTask<Void, Void, ResponseList<Status>>() {
             @Override
             protected ResponseList<twitter4j.Status> doInBackground(Void... params) {
-                progressBar.setVisibility(View.VISIBLE);
                 initTwitter();
                 ResponseList<twitter4j.Status> statuses = getResponseListStatus();
                 return statuses;
