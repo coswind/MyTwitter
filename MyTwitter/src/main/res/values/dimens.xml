@@ -33,7 +33,7 @@
     <dimen name="sidebar_button_height">51dp</dimen>
     <dimen name="sidebar_text_size">16.0dip</dimen>
 
-    <dimen name="card_gap_text_size">16sp</dimen>
+    <dimen name="card_gap_text_size">18sp</dimen>
 
     <dimen name="ptr_progress_bar_stroke_width">@dimen/padding_0</dimen>
 </resources>

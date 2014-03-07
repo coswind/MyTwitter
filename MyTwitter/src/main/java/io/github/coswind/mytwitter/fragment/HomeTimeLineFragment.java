@@ -199,8 +199,10 @@ public class HomeTimeLineFragment extends Fragment implements GetHomeTimeLineTas
         } else {
             Configuration.Builder builder = new Configuration.Builder();
             ArrayList<TwitterStatus> oldStatuses = timeLineAdapter.getStatuses();
+            int scrollPosition = 0;
             int scrollOffset = 0;
             if (type == GetHomeTimeLineTask.FROM_TOP) {
+                scrollPosition = statusCount;
                 if (listView.getChildCount() > 0) {
                     final View firstView = listView.getChildAt(0);
                     if (firstView != null) {
@@ -211,6 +213,7 @@ public class HomeTimeLineFragment extends Fragment implements GetHomeTimeLineTas
                     TwitterStatus twitterStatus = new TwitterStatus();
                     twitterStatus.setGap(true);
                     statuses.add(twitterStatus);
+                    scrollPosition++;
                 }
             } else if (type == GetHomeTimeLineTask.FROM_BOTTOM) {
                 builder.setViewGroupPosition(Configuration.POSITION_END);
@@ -225,7 +228,7 @@ public class HomeTimeLineFragment extends Fragment implements GetHomeTimeLineTas
             timeLineAdapter.notifyDataSetChanged();
             if (type == GetHomeTimeLineTask.FROM_TOP && oldStatuses != null
                     && oldStatuses.size() > 0 && statusCount > 0) {
-                listView.setSelectionFromTop(statusCount, scrollOffset);
+                listView.setSelectionFromTop(scrollPosition, scrollOffset);
             }
         }
         if (type == GetHomeTimeLineTask.FROM_BOTTOM) {

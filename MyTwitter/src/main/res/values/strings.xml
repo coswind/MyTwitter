@@ -19,7 +19,9 @@
     <string name="days_ago">%1$d 天前</string>
     <string name="hours_ago">%1$d 小时前</string>
     <string name="minutes_ago">%1$d 分钟前</string>
-    
+
+    <string name="load_more">轻按以加载更多</string>
+
     <string name="update_status">发        推</string>
     <string name="status_hint">眼见何事，情系何方，身在何处，心思何人？</string>
 </resources>
