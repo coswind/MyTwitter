@@ -28,6 +28,7 @@ import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.adapter.TimeLineAdapter;
 import io.github.coswind.mytwitter.api.GetHomeTimeLineTask;
+import io.github.coswind.mytwitter.api.StoreStatusTask;
 import io.github.coswind.mytwitter.constant.CacheConstants;
 import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.dao.DaoMaster;
@@ -61,9 +62,6 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     private ProgressBar progressBar;
     private PullToRefreshLayout pullToRefreshLayout;
     private TimeLineAdapter timeLineAdapter;
-
-    private TwitterStatus latestStatus;
-    private TwitterStatus oldestStatus;
 
     public final static int FROM_TOP = 0;
     public final static int FROM_BOTTOM = 1;
@@ -138,19 +136,15 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
                     }
                 });
                 progressBar.startAnimation(alphaAnimation);
-                super.onPostExecute(statuses);
                 timeLineAdapter = new TimeLineAdapter(getActivity());
                 listView.setAdapter(timeLineAdapter);
                 if (statuses.size() == 0) {
                     pullToRefreshLayout.onRefreshingUp();
                 } else {
-                    latestStatus = statuses.get(0);
-                    if (oldestStatus == null) {
-                        oldestStatus = statuses.get(statuses.size() - 1);
-                    }
                     timeLineAdapter.setStatuses(statuses);
                     timeLineAdapter.notifyDataSetChanged();
                 }
+                super.onPostExecute(statuses);
             }
         }.execute();
     }
@@ -205,7 +199,7 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     }
 
     @Override
-    public void onHomeTimeLine(int type, ResponseList<Status> statuses) {
+    public void onHomeTimeLine(int type, ArrayList<TwitterStatus> statuses) {
         int statusCount = statuses == null ? -1 : statuses.size();
         if (statuses == null) {
             Crouton.makeText(getActivity(), String.format(getString(R.string.home_time_line_refresh_error),
@@ -215,38 +209,22 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         } else {
             Configuration.Builder builder = new Configuration.Builder();
             ArrayList<TwitterStatus> oldStatuses = timeLineAdapter.getStatuses();
-            ArrayList<TwitterStatus> resultStatus = new ArrayList<TwitterStatus>();
             int scrollOffset = 0;
             if (type == FROM_TOP) {
-                resultStatus = storeStatusListFromTop(statuses, oldStatuses);
                 if (listView.getChildCount() > 0) {
                     final View firstView = listView.getChildAt(0);
                     if (firstView != null) {
                         scrollOffset = firstView.getTop() - listViewPaddingTop;
                     }
                 }
-                latestStatus = resultStatus.get(0);
-                if (oldStatuses != null) {
-                    resultStatus.addAll(oldStatuses);
-                }
-                if (oldestStatus == null) {
-                    oldestStatus = resultStatus.get(statusCount - 1);
-                }
             } else if (type == FROM_BOTTOM) {
-                resultStatus = storeStatusListFromBottom(statuses, oldStatuses);
-                oldestStatus = resultStatus.get(statusCount - 1);
-                if (oldStatuses != null) {
-                    oldStatuses.addAll(resultStatus);
-                    resultStatus = oldStatuses;
-                }
-                if (latestStatus == null) {
-                    latestStatus = resultStatus.get(0);
-                }
                 builder.setViewGroupPosition(Configuration.POSITION_END);
             }
             Crouton.makeText(getActivity(), "Load " + statusCount + " Tweets.", Style.INFO)
                     .setConfiguration(builder.build()).show();
-            timeLineAdapter.setStatuses(resultStatus);
+            StoreStatusTask storeStatusTask = new StoreStatusTask(statusDao, sqLiteDatabase, type == FROM_TOP, oldStatuses);
+            storeStatusTask.execute(statuses);
+            timeLineAdapter.addStatuses(statuses, type == FROM_TOP);
             timeLineAdapter.notifyDataSetChanged();
             if (type == FROM_TOP && oldStatuses != null && oldStatuses.size() > 0 && statusCount > 0) {
                 listView.setSelectionFromTop(statusCount, scrollOffset);
@@ -259,124 +237,11 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         }
     }
 
-    private ArrayList<TwitterStatus> storeStatusListFromTop(ResponseList<Status> statuses, ArrayList<TwitterStatus> oldStatus) {
-        ArrayList<TwitterStatus> statusList = new ArrayList<TwitterStatus>();
-        for (Status status : statuses) {
-            TwitterStatus daoStatus = new TwitterStatus();
-            daoStatus.setJsonString(status.getJson().toString());
-            daoStatus.setStatusId(status.getId());
-            daoStatus.setIsRetweet(status.isRetweet());
-            daoStatus.setIsRetweetedByMe(status.isRetweetedByMe());
-            if (status.isRetweet()) {
-                Status retweetStatus = status.getRetweetedStatus();
-                daoStatus.setRetweetId(retweetStatus.getId());
-                daoStatus.setRetweetedByUserId(status.getUser().getId());
-                daoStatus.setRetweetedByUserName(status.getUser().getName());
-                daoStatus.setInReplyToUserScreenName(status.getUser().getScreenName());
-                status = retweetStatus;
-            }
-            daoStatus.setIsFavorite(status.isFavorited());
-            daoStatus.setUserId(status.getUser().getId());
-            daoStatus.setUserName(status.getUser().getName());
-            daoStatus.setUserScreenName(status.getUser().getScreenName());
-            daoStatus.setUserProfileImageUrl(status.getUser().getProfileImageURL());
-            daoStatus.setStatusTimeStamp(status.getCreatedAt().getTime());
-            daoStatus.setText(status.getText());
-            daoStatus.setRetweetCount(status.getRetweetCount());
-            daoStatus.setSource(status.getSource());
-            daoStatus.setMediaLink(getPreviewUrl(status));
-            daoStatus.setInReplyToStatusId(status.getInReplyToStatusId());
-            daoStatus.setInReplyToUserId(status.getInReplyToUserId());
-            daoStatus.setInReplyToUserName(getInReplyName(status));
-            daoStatus.setInReplyToUserScreenName(status.getInReplyToScreenName());
-            statusList.add(daoStatus);
-        }
-        statusDao.insertInTx(statusList);
-        if (oldestStatus == null) { return statusList; }
-        int insertCount = statuses.size();
-        int primaryCount = oldStatus.size();
-        if (primaryCount + insertCount > CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT) {
-            sqLiteDatabase.delete(statusDao.getTablename(), StatusDao.Properties.StatusId.columnName + "<?",
-                    new String[]{String.valueOf(oldStatus.get(
-                            CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT - insertCount).getId())});
-        }
-        return statusList;
-    }
-
-    public final static Pattern IMAGES = Pattern.compile(".*\\.(png|jpeg|jpg|gif|bmp)");
-    private String getPreviewUrl(Status status) {
-        MediaEntity[] mediaEntities = status.getMediaEntities();
-        if (mediaEntities.length > 0 && !TextUtils.isEmpty(mediaEntities[0].getMediaURLHttps())) {
-            String mediaUrl = mediaEntities[0].getMediaURLHttps();
-            if (IMAGES.matcher(mediaUrl).matches()) {
-                return mediaUrl;
-            }
-        }
-        URLEntity[] urlEntities = status.getURLEntities();
-        if (urlEntities.length > 0 && !TextUtils.isEmpty(urlEntities[0].getExpandedURL())) {
-            String expandedUrl = urlEntities[0].getExpandedURL();
-            if (IMAGES.matcher(expandedUrl).matches()) {
-                return expandedUrl;
-            }
-        }
-        return null;
-    }
-    private String getInReplyName(Status status) {
-        long inReplyUserId = status.getInReplyToUserId();
-        UserMentionEntity[] entities = status.getUserMentionEntities();
-        for (UserMentionEntity entity : entities) {
-            if (inReplyUserId == entity.getId()) return entity.getName();
-        }
-        return status.getInReplyToScreenName();
-    }
-
-    private ArrayList<TwitterStatus> storeStatusListFromBottom(ResponseList<Status> statuses, ArrayList<TwitterStatus> oldStatuses) {
-        ArrayList<TwitterStatus> statusList = new ArrayList<TwitterStatus>();
-        if (oldestStatus == null) { return statusList; }
-        int truncatedCount = CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT - oldStatuses.size();
-        if (truncatedCount < 0) {
-            return statusList;
-        }
-        for (int i = 0, len = Math.min(truncatedCount, statuses.size()); i < len; i++) {
-            Status status = statuses.get(i);
-            TwitterStatus daoStatus = new TwitterStatus();
-            daoStatus.setJsonString(status.getJson().toString());
-            daoStatus.setStatusId(status.getId());
-            daoStatus.setIsRetweet(status.isRetweet());
-            daoStatus.setIsRetweetedByMe(status.isRetweetedByMe());
-            if (status.isRetweet()) {
-                Status retweetStatus = status.getRetweetedStatus();
-                daoStatus.setRetweetId(retweetStatus.getId());
-                daoStatus.setRetweetedByUserId(status.getUser().getId());
-                daoStatus.setRetweetedByUserName(status.getUser().getName());
-                daoStatus.setInReplyToUserScreenName(status.getUser().getScreenName());
-                status = retweetStatus;
-            }
-            daoStatus.setIsFavorite(status.isFavorited());
-            daoStatus.setUserId(status.getUser().getId());
-            daoStatus.setUserName(status.getUser().getName());
-            daoStatus.setUserScreenName(status.getUser().getScreenName());
-            daoStatus.setUserProfileImageUrl(status.getUser().getProfileImageURL());
-            daoStatus.setStatusTimeStamp(status.getCreatedAt().getTime());
-            daoStatus.setText(status.getText());
-            daoStatus.setRetweetCount(status.getRetweetCount());
-            daoStatus.setSource(status.getSource());
-            daoStatus.setMediaLink(getPreviewUrl(status));
-            daoStatus.setInReplyToStatusId(status.getInReplyToStatusId());
-            daoStatus.setInReplyToUserId(status.getInReplyToUserId());
-            daoStatus.setInReplyToUserName(getInReplyName(status));
-            daoStatus.setInReplyToUserScreenName(status.getInReplyToScreenName());
-            statusList.add(daoStatus);
-        }
-        statusDao.insertInTx(statusList);
-        return  statusList;
-    }
-
     @Override
     public void onRefreshingUp() {
         Paging paging = new Paging();
-        if (latestStatus != null) {
-            paging.setSinceId(latestStatus.getStatusId());
+        if (timeLineAdapter.getLatestStatus() != null) {
+            paging.setSinceId(timeLineAdapter.getLatestStatus().getStatusId());
         }
         getHomeTimeLine(FROM_TOP, paging);
     }
@@ -384,8 +249,8 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     @Override
     public void onRefreshingBottom() {
         Paging paging = new Paging();
-        if (oldestStatus != null) {
-            paging.setMaxId(oldestStatus.getStatusId() - 1);
+        if (timeLineAdapter.getOldestStatus() != null) {
+            paging.setMaxId(timeLineAdapter.getOldestStatus().getStatusId() - 1);
         }
         getHomeTimeLine(FROM_BOTTOM, paging);
     }

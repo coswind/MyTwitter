@@ -51,6 +51,9 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     private Activity activity;
     private int maxAnimationPosition = -1;
 
+    private TwitterStatus latestStatus;
+    private TwitterStatus oldestStatus;
+
     private TwitterStatus clickedStatus;
 
     public TimeLineAdapter(Activity activity) {
@@ -66,6 +69,29 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
 
     public void setStatuses(ArrayList<TwitterStatus> statuses) {
         this.statuses = statuses;
+        latestStatus = statuses.get(0);
+        oldestStatus = statuses.get(statuses.size() - 1);
+    }
+
+    public void addStatuses(ArrayList<TwitterStatus> statuses, boolean fromTop) {
+        if (fromTop) {
+            latestStatus = statuses.get(0);
+            if (this.statuses != null) {
+                ArrayList<TwitterStatus> statusArrayList = new ArrayList<TwitterStatus>();
+                statusArrayList.addAll(statuses);
+                statusArrayList.addAll(this.statuses);
+                this.statuses = statusArrayList;
+            } else {
+                oldestStatus = statuses.get(statuses.size() - 1);
+            }
+        } else {
+            oldestStatus = statuses.get(statuses.size() - 1);
+            if (this.statuses != null) {
+                this.statuses.addAll(statuses);
+            } else {
+                latestStatus = statuses.get(0);
+            }
+        }
     }
 
     @Override
@@ -255,6 +281,14 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         } else {
             Crouton.makeText(activity, "Favorite Fail", Style.ALERT).show();
         }
+    }
+
+    public TwitterStatus getOldestStatus() {
+        return oldestStatus;
+    }
+
+    public TwitterStatus getLatestStatus() {
+        return latestStatus;
     }
 
     static class ViewHolder {
