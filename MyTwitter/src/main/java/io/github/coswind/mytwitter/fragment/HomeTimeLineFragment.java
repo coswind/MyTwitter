@@ -216,6 +216,8 @@ public class HomeTimeLineFragment extends Fragment implements GetHomeTimeLineTas
                 builder.setViewGroupPosition(Configuration.POSITION_END);
                 StoreStatusTask storeStatusTask = new StoreStatusTask(statusDao, sqLiteDatabase, false, oldStatuses);
                 storeStatusTask.execute(statuses);
+            } else {
+                timeLineAdapter.setMaxAnimationPosition(paging.getPosition() - 1);
             }
             Crouton.makeText(getActivity(), "Load " + statusCount + " Tweets.", Style.INFO)
                     .setConfiguration(builder.build()).show();
@@ -255,8 +257,9 @@ public class HomeTimeLineFragment extends Fragment implements GetHomeTimeLineTas
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (view instanceof GapView) {
             Paging paging = new Paging();
-            paging.setMaxId(timeLineAdapter.getItem(position - 1).getStatusId());
+            paging.setMaxId(timeLineAdapter.getItem(position - 1).getStatusId() - 1);
             paging.setSinceId(timeLineAdapter.getItem(position + 1).getStatusId());
+            paging.setPosition(position);
             getHomeTimeLine(GetHomeTimeLineTask.FROM_CENTER, paging);
             pullToRefreshLayout.setRefreshingUp();
         }

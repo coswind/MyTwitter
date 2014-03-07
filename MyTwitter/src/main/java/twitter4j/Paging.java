@@ -35,6 +35,7 @@ public final class Paging implements java.io.Serializable {
     private int count = -1;
     private long sinceId = -1;
     private long maxId = -1;
+    private int position = -1;
     private static final long serialVersionUID = -3285857427993796670L;
 
     // since only
@@ -213,6 +214,14 @@ public final class Paging implements java.io.Serializable {
             throw new IllegalArgumentException("max_id should be positive integer. passed:" + maxId);
         }
         this.maxId = maxId;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public Paging maxId(long maxId) {

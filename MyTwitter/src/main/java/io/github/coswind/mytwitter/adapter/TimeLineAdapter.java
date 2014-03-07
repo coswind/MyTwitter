@@ -41,8 +41,6 @@ import twitter4j.Twitter;
  * Created by coswind on 14-2-20.
  */
 public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItemClickListener, View.OnClickListener, ReTweetTask.ReTweetCallback, FavoriteTask.FavoriteCallback {
-    public final static Pattern IMAGES = Pattern.compile(".*\\.(png|jpeg|jpg|gif|bmp)");
-
     private ArrayList<TwitterStatus> statuses;
 
     private LayoutInflater layoutInflater;
@@ -50,6 +48,7 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
 
     private Twitter twitter;
     private Activity activity;
+
     private int maxAnimationPosition = -1;
 
     private TwitterStatus latestStatus;
@@ -96,14 +95,12 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             ArrayList<TwitterStatus> twitterStatuses = new ArrayList<TwitterStatus>();
             for (TwitterStatus status : this.statuses) {
                 if (status.isGap()) {
+                    twitterStatuses.addAll(statuses);
                     if (statuses.size() >= TwitterConstants.PAGING_COUNT) {
                         twitterStatuses.add(status);
                     }
                 } else {
                     twitterStatuses.add(status);
-                    if (status.getStatusId() == paging.getMaxId()) {
-                        twitterStatuses.addAll(statuses);
-                    }
                 }
             }
             this.statuses = twitterStatuses;
@@ -306,5 +303,9 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             animationSet.addAnimation(rotate3dAnimation);
             animationSet.setDuration(500);
         }
+    }
+
+    public void setMaxAnimationPosition(int maxAnimationPosition) {
+        this.maxAnimationPosition = maxAnimationPosition;
     }
 }
