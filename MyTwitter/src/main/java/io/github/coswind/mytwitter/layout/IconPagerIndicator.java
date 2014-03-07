@@ -44,7 +44,7 @@ public class IconPagerIndicator extends LinearLayout implements ViewPager.OnPage
         TabIconPagerAdapter iconPagerIndicator = (TabIconPagerAdapter) viewPager.getAdapter();
         int count = iconPagerIndicator.getCount();
         for (int i = 0; i < count; i++) {
-            addTab(iconPagerIndicator.getIcon(), i);
+            addTab(iconPagerIndicator.getIcon(i), i);
         }
         requestLayout();
         setCurrentItem(0);

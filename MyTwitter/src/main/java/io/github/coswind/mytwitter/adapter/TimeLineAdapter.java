@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -26,10 +27,10 @@ import io.github.coswind.mytwitter.animation.Rotate3dAnimation;
 import io.github.coswind.mytwitter.api.FavoriteTask;
 import io.github.coswind.mytwitter.api.ReTweetTask;
 import io.github.coswind.mytwitter.constant.ColorConstants;
+import io.github.coswind.mytwitter.dao.TwitterStatus;
 import io.github.coswind.mytwitter.layout.CardLinearLayout;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
 import twitter4j.MediaEntity;
-import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.URLEntity;
@@ -41,7 +42,7 @@ import twitter4j.UserMentionEntity;
 public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItemClickListener, View.OnClickListener, ReTweetTask.ReTweetCallback, FavoriteTask.FavoriteCallback {
     public final static Pattern IMAGES = Pattern.compile(".*\\.(png|jpeg|jpg|gif|bmp)");
 
-    private ResponseList<Status> statuses;
+    private ArrayList<TwitterStatus> statuses;
 
     private LayoutInflater layoutInflater;
     private ImageLoaderWrapper imageLoaderWrapper;
@@ -50,7 +51,7 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     private Activity activity;
     private int maxAnimationPosition = -1;
 
-    private Status clickedStatus;
+    private TwitterStatus clickedStatus;
 
     public TimeLineAdapter(Activity activity) {
         this.activity = activity;
@@ -59,11 +60,11 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         this.imageLoaderWrapper = MyApplication.getInstance(activity).getImageLoaderWrapper();
     }
 
-    public ResponseList<Status> getStatuses() {
+    public ArrayList<TwitterStatus> getStatuses() {
         return statuses;
     }
 
-    public void setStatuses(ResponseList<Status> statuses) {
+    public void setStatuses(ArrayList<TwitterStatus> statuses) {
         this.statuses = statuses;
     }
 
@@ -110,31 +111,24 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Status status = statuses.get(position);
-        Status realStatus;
-
-        if (status.isRetweet()) {
-            realStatus = status.getRetweetedStatus();
-        } else {
-            realStatus = status;
-        }
+        TwitterStatus status = statuses.get(position);
 
         viewHolder.overflowImage.setTag(position);
-        viewHolder.text.setText(realStatus.getText());
-        viewHolder.name.setText(realStatus.getUser().getName());
-        viewHolder.screenName.setText("@" + realStatus.getUser().getScreenName());
-        viewHolder.time.setText(DateUtils.getRelativeTimeSpanString(realStatus.getCreatedAt().getTime()));
-        imageLoaderWrapper.displayProfileImage(viewHolder.profileImage, realStatus.getUser().getProfileImageURL());
+        viewHolder.text.setText(status.getText());
+        viewHolder.name.setText(status.getUserName());
+        viewHolder.screenName.setText("@" + status.getUserScreenName());
+        viewHolder.time.setText(DateUtils.getRelativeTimeSpanString(status.getStatusTimeStamp()));
+        imageLoaderWrapper.displayProfileImage(viewHolder.profileImage, status.getUserProfileImageUrl());
 
         if (status.isRetweet()) {
             viewHolder.cardLinearLayout.setDrawMask(true);
             viewHolder.cardLinearLayout.setMaskColor(ColorConstants.RE_TWEET_COLOR);
-            viewHolder.rightStatus.setText(String.format(activity.getString(R.string.retweeted), status.getUser().getScreenName(), status.getRetweetCount()));
+            viewHolder.rightStatus.setText(String.format(activity.getString(R.string.retweeted), status.getRetweetedByUserScreenName(), status.getRetweetCount()));
             viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_retweet, 0, 0, 0);
             viewHolder.rightStatus.setVisibility(View.VISIBLE);
         } else if (status.getInReplyToStatusId() > 0) {
             viewHolder.cardLinearLayout.setDrawMask(false);
-            viewHolder.rightStatus.setText(String.format(activity.getString(R.string.in_reply), getInReplyName(status)));
+            viewHolder.rightStatus.setText(String.format(activity.getString(R.string.in_reply), status.getInReplyToUserName()));
             viewHolder.rightStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_conversation, 0, 0, 0);
             viewHolder.rightStatus.setVisibility(View.VISIBLE);
         } else {
@@ -142,12 +136,11 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             viewHolder.rightStatus.setVisibility(View.GONE);
         }
 
-        String previewUrl = getPreviewUrl(realStatus);
-        if (TextUtils.isEmpty(previewUrl)) {
+        if (TextUtils.isEmpty(status.getMediaLink())) {
             viewHolder.previewImageLayout.setVisibility(View.GONE);
         } else {
             viewHolder.previewImageLayout.setVisibility(View.VISIBLE);
-            imageLoaderWrapper.displayPreviewImage(viewHolder.previewImage, previewUrl);
+            imageLoaderWrapper.displayPreviewImage(viewHolder.previewImage, status.getMediaLink());
         }
 
         if (position > maxAnimationPosition) {
@@ -190,13 +183,13 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         popupMenu.inflate(R.menu.card_status);
         popupMenu.setOnMenuItemClickListener(this);
         Menu menu = popupMenu.getMenu();
-        if (clickedStatus.isRetweetedByMe()) {
+        if (clickedStatus.getIsRetweetedByMe()) {
             MenuItem retweetItem = menu.findItem(R.id.retweet);
             if (retweetItem != null) {
                 retweetItem.setVisible(false);
             }
         }
-        if (clickedStatus.isFavorited()) {
+        if (clickedStatus.isFavorite()) {
             MenuItem retweetItem = menu.findItem(R.id.favorite);
             if (retweetItem != null) {
                 retweetItem.setVisible(false);
@@ -246,7 +239,7 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     public void onReTweet(boolean isSuccess) {
         if (isSuccess) {
             Crouton.makeText(activity, "Retweet Success", Style.INFO).show();
-            clickedStatus.setRetweetedByMe(true);
+            clickedStatus.setIsRetweetedByMe(true);
             notifyDataSetChanged();
         } else {
             Crouton.makeText(activity, "Retweet Fail", Style.ALERT).show();
@@ -257,7 +250,7 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     public void onFavorite(boolean isSuccess) {
         if (isSuccess) {
             Crouton.makeText(activity, "Favorite Success", Style.INFO).show();
-            clickedStatus.setFavorite(true);
+            clickedStatus.setIsFavorite(true);
             notifyDataSetChanged();
         } else {
             Crouton.makeText(activity, "Favorite Fail", Style.ALERT).show();

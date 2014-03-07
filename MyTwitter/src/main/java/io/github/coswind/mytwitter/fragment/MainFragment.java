@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -30,22 +32,23 @@ import io.github.coswind.mytwitter.constant.CacheConstants;
 import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.dao.DaoMaster;
 import io.github.coswind.mytwitter.dao.StatusDao;
+import io.github.coswind.mytwitter.dao.TwitterStatus;
+import io.github.coswind.mytwitter.layout.PullToRefreshLayout;
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
 import io.github.coswind.mytwitter.utils.LogUtils;
-import io.github.coswind.mytwitter.layout.PullToRefreshLayout;
+import twitter4j.MediaEntity;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.URLEntity;
+import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.internal.http.HttpClient;
 import twitter4j.internal.http.HttpClientFactory;
 import twitter4j.internal.http.HttpRequest;
 import twitter4j.internal.http.RequestMethod;
-import twitter4j.internal.json.ResponseListImpl;
-import twitter4j.internal.json.StatusJSONImpl;
-import twitter4j.internal.org.json.JSONObject;
 
 /**
  * Created by coswind on 14-2-13.
@@ -59,8 +62,8 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     private PullToRefreshLayout pullToRefreshLayout;
     private TimeLineAdapter timeLineAdapter;
 
-    private Status latestStatus;
-    private Status oldestStatus;
+    private TwitterStatus latestStatus;
+    private TwitterStatus oldestStatus;
 
     public final static int FROM_TOP = 0;
     public final static int FROM_BOTTOM = 1;
@@ -93,15 +96,15 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         init();
     }
 
-    private ResponseList<Status> getResponseListStatus() {
-        ResponseList<Status> statuses = new ResponseListImpl<Status>();
+    private ArrayList<TwitterStatus> getResponseListStatus() {
+        ArrayList<TwitterStatus> statuses = new ArrayList<TwitterStatus>();
         Cursor cursor = sqLiteDatabase.query(statusDao.getTablename(), statusDao.getAllColumns(),
-                null, null, null, null, StatusDao.Properties.Status_id.columnName + " DESC");
+                null, null, null, null, StatusDao.Properties.StatusId.columnName + " DESC");
         if (cursor.moveToFirst()) {
             do {
-                io.github.coswind.mytwitter.dao.Status status = statusDao.readEntity(cursor, 0);
+                TwitterStatus status = statusDao.readEntity(cursor, 0);
                 try {
-                    statuses.add(new StatusJSONImpl(new JSONObject(status.getJsonString())));
+                    statuses.add(status);
                 } catch (Exception e) {
                     LogUtils.d("add error: " + e);
                 }
@@ -112,16 +115,16 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
 
     private void init() {
         progressBar.setVisibility(View.VISIBLE);
-        new AsyncTask<Void, Void, ResponseList<Status>>() {
+        new AsyncTask<Void, Void, ArrayList<TwitterStatus>>() {
             @Override
-            protected ResponseList<twitter4j.Status> doInBackground(Void... params) {
+            protected ArrayList<TwitterStatus> doInBackground(Void... params) {
                 initTwitter();
-                ResponseList<twitter4j.Status> statuses = getResponseListStatus();
+                ArrayList<TwitterStatus> statuses = getResponseListStatus();
                 return statuses;
             }
 
             @Override
-            protected void onPostExecute(ResponseList<twitter4j.Status> statuses) {
+            protected void onPostExecute(ArrayList<TwitterStatus> statuses) {
                 AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
                 alphaAnimation.setDuration(500);
                 alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -211,38 +214,39 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
             Crouton.makeText(getActivity(), "No Tweets.", Style.ALERT).show();
         } else {
             Configuration.Builder builder = new Configuration.Builder();
-            ResponseList<Status> oldStatuses = timeLineAdapter.getStatuses();
+            ArrayList<TwitterStatus> oldStatuses = timeLineAdapter.getStatuses();
+            ArrayList<TwitterStatus> resultStatus = new ArrayList<TwitterStatus>();
             int scrollOffset = 0;
             if (type == FROM_TOP) {
-                storeStatusListFromTop(statuses, oldStatuses);
+                resultStatus = storeStatusListFromTop(statuses, oldStatuses);
                 if (listView.getChildCount() > 0) {
                     final View firstView = listView.getChildAt(0);
                     if (firstView != null) {
                         scrollOffset = firstView.getTop() - listViewPaddingTop;
                     }
                 }
-                latestStatus = statuses.get(0);
+                latestStatus = resultStatus.get(0);
                 if (oldStatuses != null) {
-                    statuses.addAll(oldStatuses);
+                    resultStatus.addAll(oldStatuses);
                 }
                 if (oldestStatus == null) {
-                    oldestStatus = statuses.get(statusCount - 1);
+                    oldestStatus = resultStatus.get(statusCount - 1);
                 }
             } else if (type == FROM_BOTTOM) {
-                storeStatusListFromBottom(statuses, oldStatuses);
-                oldestStatus = statuses.get(statusCount - 1);
+                resultStatus = storeStatusListFromBottom(statuses, oldStatuses);
+                oldestStatus = resultStatus.get(statusCount - 1);
                 if (oldStatuses != null) {
-                    oldStatuses.addAll(statuses);
-                    statuses = oldStatuses;
+                    oldStatuses.addAll(resultStatus);
+                    resultStatus = oldStatuses;
                 }
                 if (latestStatus == null) {
-                    latestStatus = statuses.get(0);
+                    latestStatus = resultStatus.get(0);
                 }
                 builder.setViewGroupPosition(Configuration.POSITION_END);
             }
             Crouton.makeText(getActivity(), "Load " + statusCount + " Tweets.", Style.INFO)
                     .setConfiguration(builder.build()).show();
-            timeLineAdapter.setStatuses(statuses);
+            timeLineAdapter.setStatuses(resultStatus);
             timeLineAdapter.notifyDataSetChanged();
             if (type == FROM_TOP && oldStatuses != null && oldStatuses.size() > 0 && statusCount > 0) {
                 listView.setSelectionFromTop(statusCount, scrollOffset);
@@ -255,41 +259,124 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         }
     }
 
-    private void storeStatusListFromTop(ResponseList<Status> statuses, ResponseList<Status> oldStatus) {
-        ArrayList<io.github.coswind.mytwitter.dao.Status> statusList = new ArrayList<io.github.coswind.mytwitter.dao.Status>();
+    private ArrayList<TwitterStatus> storeStatusListFromTop(ResponseList<Status> statuses, ArrayList<TwitterStatus> oldStatus) {
+        ArrayList<TwitterStatus> statusList = new ArrayList<TwitterStatus>();
         for (Status status : statuses) {
-            statusList.add(new io.github.coswind.mytwitter.dao.Status(status.getId(), status.getJson().toString()));
+            TwitterStatus daoStatus = new TwitterStatus();
+            daoStatus.setJsonString(status.getJson().toString());
+            daoStatus.setStatusId(status.getId());
+            daoStatus.setIsRetweet(status.isRetweet());
+            daoStatus.setIsRetweetedByMe(status.isRetweetedByMe());
+            if (status.isRetweet()) {
+                Status retweetStatus = status.getRetweetedStatus();
+                daoStatus.setRetweetId(retweetStatus.getId());
+                daoStatus.setRetweetedByUserId(status.getUser().getId());
+                daoStatus.setRetweetedByUserName(status.getUser().getName());
+                daoStatus.setInReplyToUserScreenName(status.getUser().getScreenName());
+                status = retweetStatus;
+            }
+            daoStatus.setIsFavorite(status.isFavorited());
+            daoStatus.setUserId(status.getUser().getId());
+            daoStatus.setUserName(status.getUser().getName());
+            daoStatus.setUserScreenName(status.getUser().getScreenName());
+            daoStatus.setUserProfileImageUrl(status.getUser().getProfileImageURL());
+            daoStatus.setStatusTimeStamp(status.getCreatedAt().getTime());
+            daoStatus.setText(status.getText());
+            daoStatus.setRetweetCount(status.getRetweetCount());
+            daoStatus.setSource(status.getSource());
+            daoStatus.setMediaLink(getPreviewUrl(status));
+            daoStatus.setInReplyToStatusId(status.getInReplyToStatusId());
+            daoStatus.setInReplyToUserId(status.getInReplyToUserId());
+            daoStatus.setInReplyToUserName(getInReplyName(status));
+            daoStatus.setInReplyToUserScreenName(status.getInReplyToScreenName());
+            statusList.add(daoStatus);
         }
         statusDao.insertInTx(statusList);
-        if (oldestStatus == null) { return; }
+        if (oldestStatus == null) { return statusList; }
         int insertCount = statuses.size();
         int primaryCount = oldStatus.size();
         if (primaryCount + insertCount > CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT) {
-            sqLiteDatabase.delete(statusDao.getTablename(), StatusDao.Properties.Status_id.columnName + "<?",
+            sqLiteDatabase.delete(statusDao.getTablename(), StatusDao.Properties.StatusId.columnName + "<?",
                     new String[]{String.valueOf(oldStatus.get(
                             CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT - insertCount).getId())});
         }
+        return statusList;
     }
 
-    private void storeStatusListFromBottom(ResponseList<Status> statuses, ResponseList<Status> oldStatuses) {
-        if (oldestStatus == null) { return; }
+    public final static Pattern IMAGES = Pattern.compile(".*\\.(png|jpeg|jpg|gif|bmp)");
+    private String getPreviewUrl(Status status) {
+        MediaEntity[] mediaEntities = status.getMediaEntities();
+        if (mediaEntities.length > 0 && !TextUtils.isEmpty(mediaEntities[0].getMediaURLHttps())) {
+            String mediaUrl = mediaEntities[0].getMediaURLHttps();
+            if (IMAGES.matcher(mediaUrl).matches()) {
+                return mediaUrl;
+            }
+        }
+        URLEntity[] urlEntities = status.getURLEntities();
+        if (urlEntities.length > 0 && !TextUtils.isEmpty(urlEntities[0].getExpandedURL())) {
+            String expandedUrl = urlEntities[0].getExpandedURL();
+            if (IMAGES.matcher(expandedUrl).matches()) {
+                return expandedUrl;
+            }
+        }
+        return null;
+    }
+    private String getInReplyName(Status status) {
+        long inReplyUserId = status.getInReplyToUserId();
+        UserMentionEntity[] entities = status.getUserMentionEntities();
+        for (UserMentionEntity entity : entities) {
+            if (inReplyUserId == entity.getId()) return entity.getName();
+        }
+        return status.getInReplyToScreenName();
+    }
+
+    private ArrayList<TwitterStatus> storeStatusListFromBottom(ResponseList<Status> statuses, ArrayList<TwitterStatus> oldStatuses) {
+        ArrayList<TwitterStatus> statusList = new ArrayList<TwitterStatus>();
+        if (oldestStatus == null) { return statusList; }
         int truncatedCount = CacheConstants.DEFAULT_DATABASE_ITEM_LIMIT - oldStatuses.size();
         if (truncatedCount < 0) {
-            return;
+            return statusList;
         }
-        ArrayList<io.github.coswind.mytwitter.dao.Status> statusList = new ArrayList<io.github.coswind.mytwitter.dao.Status>();
         for (int i = 0, len = Math.min(truncatedCount, statuses.size()); i < len; i++) {
             Status status = statuses.get(i);
-            statusList.add(new io.github.coswind.mytwitter.dao.Status(status.getId(), status.getJson().toString()));
+            TwitterStatus daoStatus = new TwitterStatus();
+            daoStatus.setJsonString(status.getJson().toString());
+            daoStatus.setStatusId(status.getId());
+            daoStatus.setIsRetweet(status.isRetweet());
+            daoStatus.setIsRetweetedByMe(status.isRetweetedByMe());
+            if (status.isRetweet()) {
+                Status retweetStatus = status.getRetweetedStatus();
+                daoStatus.setRetweetId(retweetStatus.getId());
+                daoStatus.setRetweetedByUserId(status.getUser().getId());
+                daoStatus.setRetweetedByUserName(status.getUser().getName());
+                daoStatus.setInReplyToUserScreenName(status.getUser().getScreenName());
+                status = retweetStatus;
+            }
+            daoStatus.setIsFavorite(status.isFavorited());
+            daoStatus.setUserId(status.getUser().getId());
+            daoStatus.setUserName(status.getUser().getName());
+            daoStatus.setUserScreenName(status.getUser().getScreenName());
+            daoStatus.setUserProfileImageUrl(status.getUser().getProfileImageURL());
+            daoStatus.setStatusTimeStamp(status.getCreatedAt().getTime());
+            daoStatus.setText(status.getText());
+            daoStatus.setRetweetCount(status.getRetweetCount());
+            daoStatus.setSource(status.getSource());
+            daoStatus.setMediaLink(getPreviewUrl(status));
+            daoStatus.setInReplyToStatusId(status.getInReplyToStatusId());
+            daoStatus.setInReplyToUserId(status.getInReplyToUserId());
+            daoStatus.setInReplyToUserName(getInReplyName(status));
+            daoStatus.setInReplyToUserScreenName(status.getInReplyToScreenName());
+            statusList.add(daoStatus);
         }
         statusDao.insertInTx(statusList);
+        return  statusList;
     }
 
     @Override
     public void onRefreshingUp() {
         Paging paging = new Paging();
         if (latestStatus != null) {
-            paging.setSinceId(latestStatus.getId());
+            paging.setSinceId(latestStatus.getStatusId());
         }
         getHomeTimeLine(FROM_TOP, paging);
     }
@@ -298,7 +385,7 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     public void onRefreshingBottom() {
         Paging paging = new Paging();
         if (oldestStatus != null) {
-            paging.setMaxId(oldestStatus.getId() - 1);
+            paging.setMaxId(oldestStatus.getStatusId() - 1);
         }
         getHomeTimeLine(FROM_BOTTOM, paging);
     }

@@ -24,7 +24,7 @@ public class TabIconPagerAdapter extends FragmentPagerAdapter {
         return null;
     }
 
-    public Drawable getIcon() {
+    public Drawable getIcon(int position) {
         return null;
     }
 }

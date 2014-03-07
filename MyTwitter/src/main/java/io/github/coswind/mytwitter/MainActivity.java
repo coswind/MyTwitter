@@ -12,6 +12,7 @@ import android.view.View;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import io.github.coswind.mytwitter.adapter.TabIconPagerAdapter;
+import io.github.coswind.mytwitter.fragment.BaseFragment;
 import io.github.coswind.mytwitter.fragment.MainFragment;
 import io.github.coswind.mytwitter.layout.IconPagerIndicator;
 
@@ -25,6 +26,7 @@ public class MainActivity extends BaseActivity {
 
         slidingMenu = new SlidingMenu(this);
         slidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
+        slidingMenu.setTouchmodeMarginThreshold(getResources().getDimensionPixelSize(R.dimen.padding_3));
         slidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         slidingMenu.setShadowDrawable(R.drawable.left_sidebar_shadow);
         slidingMenu.setSecondaryShadowDrawable(R.drawable.right_sidebar_shadow);
@@ -40,19 +42,23 @@ public class MainActivity extends BaseActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setOffscreenPageLimit(4);
         viewPager.setAdapter(new TabIconPagerAdapter(getFragmentManager()) {
+            private TabProvider[] tabProviders = new TabProvider[] {
+                    new TabProvider(new MainFragment(), getResources().getDrawable(R.drawable.ic_tab_home)),
+                    new TabProvider(new BaseFragment(), getResources().getDrawable(R.drawable.ic_tab_mention)),
+                    new TabProvider(new BaseFragment(), getResources().getDrawable(R.drawable.ic_tab_trends)),
+                    new TabProvider(new BaseFragment(), getResources().getDrawable(R.drawable.ic_tab_message))
+            };
             @Override
             public int getCount() {
-                return 4;
+                return tabProviders.length;
             }
-
             @Override
             public Fragment getItem(int position) {
-                return new MainFragment();
+                return tabProviders[position].fragment;
             }
-
             @Override
-            public Drawable getIcon() {
-                return getResources().getDrawable(R.drawable.ic_tab_home);
+            public Drawable getIcon(int position) {
+                return tabProviders[position].drawable;
             }
         });
 
@@ -79,5 +85,14 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class TabProvider {
+        Fragment fragment;
+        Drawable drawable;
+        private TabProvider(Fragment fragment, Drawable drawable) {
+            this.fragment = fragment;
+            this.drawable = drawable;
+        }
     }
 }
