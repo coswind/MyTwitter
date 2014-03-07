@@ -13,7 +13,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import io.github.coswind.mytwitter.adapter.TabIconPagerAdapter;
 import io.github.coswind.mytwitter.fragment.BaseFragment;
-import io.github.coswind.mytwitter.fragment.MainFragment;
+import io.github.coswind.mytwitter.fragment.HomeTimeLineFragment;
 import io.github.coswind.mytwitter.layout.IconPagerIndicator;
 
 public class MainActivity extends BaseActivity {
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
         viewPager.setOffscreenPageLimit(4);
         viewPager.setAdapter(new TabIconPagerAdapter(getFragmentManager()) {
             private TabProvider[] tabProviders = new TabProvider[] {
-                    new TabProvider(new MainFragment(), getResources().getDrawable(R.drawable.ic_tab_home)),
+                    new TabProvider(new HomeTimeLineFragment(), getResources().getDrawable(R.drawable.ic_tab_home)),
                     new TabProvider(new BaseFragment(), getResources().getDrawable(R.drawable.ic_tab_mention)),
                     new TabProvider(new BaseFragment(), getResources().getDrawable(R.drawable.ic_tab_trends)),
                     new TabProvider(new BaseFragment(), getResources().getDrawable(R.drawable.ic_tab_message))

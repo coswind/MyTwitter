@@ -35,14 +35,15 @@
     </style>
 
     <style name="Card">
-        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:paddingLeft">@dimen/padding_2</item>
+        <item name="android:paddingRight">@dimen/padding_2</item>
+        <item name="android:paddingTop">@dimen/padding_0</item>
+        <item name="android:paddingBottom">@dimen/padding_0</item>
     </style>
 
     <style name="CardList">
-        <item name="android:padding">@dimen/padding_1</item>
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:divider">@android:color/transparent</item>
-        <item name="android:dividerHeight">@dimen/padding_0</item>
         <item name="android:listSelector">@android:color/transparent</item>
         <item name="android:clipToPadding">false</item>
     </style>

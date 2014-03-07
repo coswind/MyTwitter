@@ -220,7 +220,7 @@ public class PullToRefreshLayout extends FrameLayout {
         }
     }
 
-    public void onRefreshUpEnd() {
+    public void setRefreshUpEnd() {
         isRefreshingUp = false;
         if (this.upProgressBar != null) {
             this.upProgressBar.setVisibility(View.INVISIBLE);
@@ -229,7 +229,7 @@ public class PullToRefreshLayout extends FrameLayout {
         }
     }
 
-    public void onRefreshingBottomEnd() {
+    public void setRefreshingBottomEnd() {
         isRefreshingBottom = false;
         if (this.bottomProgressBar != null) {
             this.bottomProgressBar.setVisibility(View.INVISIBLE);
@@ -239,13 +239,17 @@ public class PullToRefreshLayout extends FrameLayout {
     }
 
     public void onRefreshingUp() {
+        setRefreshingUp();
+        pullRefreshListener.onRefreshingUp();
+    }
+
+    public void setRefreshingUp() {
         isRefreshingUp = true;
         if (this.upProgressBar != null) {
             this.upProgressBar.setProgress(100);
             this.upProgressBar.setIndeterminate(true);
             this.upProgressBar.setVisibility(View.VISIBLE);
         }
-        pullRefreshListener.onRefreshingUp();
     }
 
     public void onRefreshingBottom() {

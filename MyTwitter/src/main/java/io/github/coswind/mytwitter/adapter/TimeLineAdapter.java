@@ -25,16 +25,17 @@ import io.github.coswind.mytwitter.MyApplication;
 import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.animation.Rotate3dAnimation;
 import io.github.coswind.mytwitter.api.FavoriteTask;
+import io.github.coswind.mytwitter.api.GetHomeTimeLineTask;
 import io.github.coswind.mytwitter.api.ReTweetTask;
 import io.github.coswind.mytwitter.constant.ColorConstants;
+import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.dao.TwitterStatus;
 import io.github.coswind.mytwitter.layout.CardLinearLayout;
 import io.github.coswind.mytwitter.utils.ImageLoaderWrapper;
-import twitter4j.MediaEntity;
-import twitter4j.Status;
+import io.github.coswind.mytwitter.utils.LogUtils;
+import io.github.coswind.mytwitter.widget.GapView;
+import twitter4j.Paging;
 import twitter4j.Twitter;
-import twitter4j.URLEntity;
-import twitter4j.UserMentionEntity;
 
 /**
  * Created by coswind on 14-2-20.
@@ -73,8 +74,8 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         oldestStatus = statuses.get(statuses.size() - 1);
     }
 
-    public void addStatuses(ArrayList<TwitterStatus> statuses, boolean fromTop) {
-        if (fromTop) {
+    public void addStatuses(ArrayList<TwitterStatus> statuses, int type, Paging paging) {
+        if (type == GetHomeTimeLineTask.FROM_TOP) {
             latestStatus = statuses.get(0);
             if (this.statuses != null) {
                 ArrayList<TwitterStatus> statusArrayList = new ArrayList<TwitterStatus>();
@@ -84,13 +85,28 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
             } else {
                 oldestStatus = statuses.get(statuses.size() - 1);
             }
-        } else {
+        } else if (type == GetHomeTimeLineTask.FROM_BOTTOM) {
             oldestStatus = statuses.get(statuses.size() - 1);
             if (this.statuses != null) {
                 this.statuses.addAll(statuses);
             } else {
                 latestStatus = statuses.get(0);
             }
+        } else {
+            ArrayList<TwitterStatus> twitterStatuses = new ArrayList<TwitterStatus>();
+            for (TwitterStatus status : this.statuses) {
+                if (status.isGap()) {
+                    if (statuses.size() >= TwitterConstants.PAGING_COUNT) {
+                        twitterStatuses.add(status);
+                    }
+                } else {
+                    twitterStatuses.add(status);
+                    if (status.getStatusId() == paging.getMaxId()) {
+                        twitterStatuses.addAll(statuses);
+                    }
+                }
+            }
+            this.statuses = twitterStatuses;
         }
     }
 
@@ -101,7 +117,7 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     }
 
     @Override
-    public Object getItem(int position) {
+    public TwitterStatus getItem(int position) {
         if (statuses == null) return null;
         return statuses.get(position);
     }
@@ -115,8 +131,13 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
+        TwitterStatus status = statuses.get(position);
 
-        if (convertView == null) {
+        if (status.isGap()) {
+            return new GapView(activity);
+        }
+
+        if (convertView == null || convertView instanceof GapView) {
             convertView = layoutInflater.inflate(R.layout.card, null);
             viewHolder = new ViewHolder();
             viewHolder.cardLinearLayout = (CardLinearLayout) convertView.findViewById(R.id.layout);
@@ -136,8 +157,6 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
-        TwitterStatus status = statuses.get(position);
 
         viewHolder.overflowImage.setTag(position);
         viewHolder.text.setText(status.getText());
@@ -175,33 +194,6 @@ public class TimeLineAdapter extends BaseAdapter implements PopupMenu.OnMenuItem
         }
 
         return convertView;
-    }
-
-    private String getPreviewUrl(Status status) {
-        MediaEntity[] mediaEntities = status.getMediaEntities();
-        if (mediaEntities.length > 0 && !TextUtils.isEmpty(mediaEntities[0].getMediaURLHttps())) {
-            String mediaUrl = mediaEntities[0].getMediaURLHttps();
-            if (IMAGES.matcher(mediaUrl).matches()) {
-                return mediaUrl;
-            }
-        }
-        URLEntity[] urlEntities = status.getURLEntities();
-        if (urlEntities.length > 0 && !TextUtils.isEmpty(urlEntities[0].getExpandedURL())) {
-            String expandedUrl = urlEntities[0].getExpandedURL();
-            if (IMAGES.matcher(expandedUrl).matches()) {
-                return expandedUrl;
-            }
-        }
-        return null;
-    }
-
-    private String getInReplyName(Status status) {
-        long inReplyUserId = status.getInReplyToUserId();
-        UserMentionEntity[] entities = status.getUserMentionEntities();
-        for (UserMentionEntity entity : entities) {
-            if (inReplyUserId == entity.getId()) return entity.getName();
-        }
-        return status.getInReplyToScreenName();
     }
 
     private void showPopUpMenu(View view) {

@@ -6,19 +6,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -29,7 +28,6 @@ import io.github.coswind.mytwitter.R;
 import io.github.coswind.mytwitter.adapter.TimeLineAdapter;
 import io.github.coswind.mytwitter.api.GetHomeTimeLineTask;
 import io.github.coswind.mytwitter.api.StoreStatusTask;
-import io.github.coswind.mytwitter.constant.CacheConstants;
 import io.github.coswind.mytwitter.constant.TwitterConstants;
 import io.github.coswind.mytwitter.dao.DaoMaster;
 import io.github.coswind.mytwitter.dao.StatusDao;
@@ -38,13 +36,9 @@ import io.github.coswind.mytwitter.layout.PullToRefreshLayout;
 import io.github.coswind.mytwitter.model.Account;
 import io.github.coswind.mytwitter.sp.AccountSpUtils;
 import io.github.coswind.mytwitter.utils.LogUtils;
-import twitter4j.MediaEntity;
+import io.github.coswind.mytwitter.widget.GapView;
 import twitter4j.Paging;
-import twitter4j.ResponseList;
-import twitter4j.Status;
 import twitter4j.Twitter;
-import twitter4j.URLEntity;
-import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.internal.http.HttpClient;
 import twitter4j.internal.http.HttpClientFactory;
@@ -54,7 +48,7 @@ import twitter4j.internal.http.RequestMethod;
 /**
  * Created by coswind on 14-2-13.
  */
-public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTimeLineCallback, PullToRefreshLayout.PullRefreshListener {
+public class HomeTimeLineFragment extends Fragment implements GetHomeTimeLineTask.HomeTimeLineCallback, PullToRefreshLayout.PullRefreshListener, AdapterView.OnItemClickListener {
     private HttpClient httpClient;
     private Twitter twitter;
 
@@ -63,15 +57,12 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     private PullToRefreshLayout pullToRefreshLayout;
     private TimeLineAdapter timeLineAdapter;
 
-    public final static int FROM_TOP = 0;
-    public final static int FROM_BOTTOM = 1;
-
     private SQLiteDatabase sqLiteDatabase;
     private StatusDao statusDao;
 
     private int listViewPaddingTop;
 
-    public MainFragment() {
+    public HomeTimeLineFragment() {
         httpClient = HttpClientFactory.getInstance(TwitterConstants.configuration);
     }
 
@@ -127,9 +118,11 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
                 alphaAnimation.setDuration(500);
                 alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationRepeat(Animation animation) {}
+                    public void onAnimationRepeat(Animation animation) {
+                    }
                     @Override
-                    public void onAnimationStart(Animation animation) {}
+                    public void onAnimationStart(Animation animation) {
+                    }
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         progressBar.setVisibility(View.INVISIBLE);
@@ -151,6 +144,7 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
 
     private void initView(View view) {
         listView = (ListView) view.findViewById(R.id.list_view);
+        listView.setOnItemClickListener(this);
         progressBar = (ProgressBar) view.findViewById(R.id.ptr_progress_center);
         listViewPaddingTop = listView.getPaddingTop();
         pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.pull_refresh_layout);
@@ -178,12 +172,8 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
 
     public void getHomeTimeLine(int type, Paging paging) {
         LogUtils.d("start get home time line.");
-        GetHomeTimeLineTask getHomeTimeLineTask = new GetHomeTimeLineTask(twitter, this, type);
-        if (paging == null) {
-            getHomeTimeLineTask.execute();
-        } else {
-            getHomeTimeLineTask.execute(paging);
-        }
+        GetHomeTimeLineTask getHomeTimeLineTask = new GetHomeTimeLineTask(twitter, this, paging, type);
+        getHomeTimeLineTask.execute();
     }
 
     private Account signIn() throws Exception {
@@ -199,7 +189,7 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
     }
 
     @Override
-    public void onHomeTimeLine(int type, ArrayList<TwitterStatus> statuses) {
+    public void onHomeTimeLine(int type, Paging paging, ArrayList<TwitterStatus> statuses) {
         int statusCount = statuses == null ? -1 : statuses.size();
         if (statuses == null) {
             Crouton.makeText(getActivity(), String.format(getString(R.string.home_time_line_refresh_error),
@@ -210,30 +200,36 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
             Configuration.Builder builder = new Configuration.Builder();
             ArrayList<TwitterStatus> oldStatuses = timeLineAdapter.getStatuses();
             int scrollOffset = 0;
-            if (type == FROM_TOP) {
+            if (type == GetHomeTimeLineTask.FROM_TOP) {
                 if (listView.getChildCount() > 0) {
                     final View firstView = listView.getChildAt(0);
                     if (firstView != null) {
                         scrollOffset = firstView.getTop() - listViewPaddingTop;
                     }
                 }
-            } else if (type == FROM_BOTTOM) {
+                if (statuses.size() >= TwitterConstants.PAGING_COUNT) {
+                    TwitterStatus twitterStatus = new TwitterStatus();
+                    twitterStatus.setGap(true);
+                    statuses.add(twitterStatus);
+                }
+            } else if (type == GetHomeTimeLineTask.FROM_BOTTOM) {
                 builder.setViewGroupPosition(Configuration.POSITION_END);
+                StoreStatusTask storeStatusTask = new StoreStatusTask(statusDao, sqLiteDatabase, false, oldStatuses);
+                storeStatusTask.execute(statuses);
             }
             Crouton.makeText(getActivity(), "Load " + statusCount + " Tweets.", Style.INFO)
                     .setConfiguration(builder.build()).show();
-            StoreStatusTask storeStatusTask = new StoreStatusTask(statusDao, sqLiteDatabase, type == FROM_TOP, oldStatuses);
-            storeStatusTask.execute(statuses);
-            timeLineAdapter.addStatuses(statuses, type == FROM_TOP);
+            timeLineAdapter.addStatuses(statuses, type, paging);
             timeLineAdapter.notifyDataSetChanged();
-            if (type == FROM_TOP && oldStatuses != null && oldStatuses.size() > 0 && statusCount > 0) {
+            if (type == GetHomeTimeLineTask.FROM_TOP && oldStatuses != null
+                    && oldStatuses.size() > 0 && statusCount > 0) {
                 listView.setSelectionFromTop(statusCount, scrollOffset);
             }
         }
-        if (type == FROM_TOP) {
-            pullToRefreshLayout.onRefreshUpEnd();
-        } else if (type == FROM_BOTTOM) {
-            pullToRefreshLayout.onRefreshingBottomEnd();
+        if (type == GetHomeTimeLineTask.FROM_BOTTOM) {
+            pullToRefreshLayout.setRefreshingBottomEnd();
+        } else {
+            pullToRefreshLayout.setRefreshUpEnd();
         }
     }
 
@@ -243,7 +239,7 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         if (timeLineAdapter.getLatestStatus() != null) {
             paging.setSinceId(timeLineAdapter.getLatestStatus().getStatusId());
         }
-        getHomeTimeLine(FROM_TOP, paging);
+        getHomeTimeLine(GetHomeTimeLineTask.FROM_TOP, paging);
     }
 
     @Override
@@ -252,6 +248,17 @@ public class MainFragment extends Fragment implements GetHomeTimeLineTask.HomeTi
         if (timeLineAdapter.getOldestStatus() != null) {
             paging.setMaxId(timeLineAdapter.getOldestStatus().getStatusId() - 1);
         }
-        getHomeTimeLine(FROM_BOTTOM, paging);
+        getHomeTimeLine(GetHomeTimeLineTask.FROM_BOTTOM, paging);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (view instanceof GapView) {
+            Paging paging = new Paging();
+            paging.setMaxId(timeLineAdapter.getItem(position - 1).getStatusId());
+            paging.setSinceId(timeLineAdapter.getItem(position + 1).getStatusId());
+            getHomeTimeLine(GetHomeTimeLineTask.FROM_CENTER, paging);
+            pullToRefreshLayout.setRefreshingUp();
+        }
     }
 }

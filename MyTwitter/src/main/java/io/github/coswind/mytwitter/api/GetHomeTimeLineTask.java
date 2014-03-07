@@ -15,26 +15,32 @@ import twitter4j.TwitterException;
 /**
  * Created by coswind on 14-2-20.
  */
-public class GetHomeTimeLineTask extends AsyncTask<Paging, Void, ArrayList<TwitterStatus>> {
+public class GetHomeTimeLineTask extends AsyncTask<Void, Void, ArrayList<TwitterStatus>> {
+    public final static int FROM_TOP = 0;
+    public final static int FROM_BOTTOM = 1;
+    public final static int FROM_CENTER = 2;
+
     private Twitter twitter;
     private HomeTimeLineCallback cb;
+    private Paging paging;
 
     private int type;
 
-    public GetHomeTimeLineTask(Twitter twitter, HomeTimeLineCallback cb, int type) {
+    public GetHomeTimeLineTask(Twitter twitter, HomeTimeLineCallback cb, Paging paging, int type) {
         this.twitter = twitter;
         this.cb = cb;
+        this.paging = paging;
         this.type = type;
     }
 
     @Override
-    protected ArrayList<TwitterStatus> doInBackground(Paging... params) {
+    protected ArrayList<TwitterStatus> doInBackground(Void... params) {
         ResponseList<twitter4j.Status> statuses = null;
         ArrayList<TwitterStatus> statusList = null;
         try {
-            if (params.length > 0) {
-                LogUtils.d("paging:" + params[0]);
-                statuses = twitter.getHomeTimeline(params[0]);
+            if (paging != null) {
+                LogUtils.d("paging:" + paging);
+                statuses = twitter.getHomeTimeline(paging);
             } else {
                 statuses = twitter.getHomeTimeline();
             }
@@ -51,10 +57,10 @@ public class GetHomeTimeLineTask extends AsyncTask<Paging, Void, ArrayList<Twitt
 
     @Override
     protected void onPostExecute(ArrayList<TwitterStatus> statuses) {
-        cb.onHomeTimeLine(type, statuses);
+        cb.onHomeTimeLine(type, paging, statuses);
     }
 
     public static interface HomeTimeLineCallback {
-        void onHomeTimeLine(int type, ArrayList<TwitterStatus> statuses);
+        void onHomeTimeLine(int type, Paging paging, ArrayList<TwitterStatus> statuses);
     }
 }

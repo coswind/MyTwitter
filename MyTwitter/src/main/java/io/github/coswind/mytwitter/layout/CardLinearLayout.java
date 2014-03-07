@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -20,6 +22,7 @@ public class CardLinearLayout extends LinearLayout {
     private Paint paint = new Paint();
     private boolean isDrawMask = false;
     private Drawable itemSelector;
+    private Drawable background;
 
     public CardLinearLayout(Context context) {
         this(context, null);
@@ -32,10 +35,12 @@ public class CardLinearLayout extends LinearLayout {
     public CardLinearLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
         setItemSelector(ThemeUtils.getItemBackgroundSelector(context));
+        background = getResources().getDrawable(R.drawable.bg_card);
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        background.draw(canvas);
         if (isDrawMask) {
             canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom(), paint);
         }
@@ -62,6 +67,14 @@ public class CardLinearLayout extends LinearLayout {
         final int paddingRight = getPaddingRight();
         final int paddingBottom = getPaddingBottom();
         final int l = paddingLeft, t = paddingTop, r = w - paddingRight, b = h - paddingBottom;
+        if (background instanceof NinePatchDrawable) {
+            final NinePatchDrawable ninePatchDrawable = (NinePatchDrawable) background;
+            Rect padding = new Rect();
+            ninePatchDrawable.getPadding(padding);
+            ninePatchDrawable.setBounds(l - padding.left, t - padding.top, r + padding.right, b + padding.bottom);
+        } else {
+            background.setBounds(l, t, r, b);
+        }
         itemSelector.setBounds(l, t, r, b);
     }
 

@@ -30,6 +30,16 @@ public class TwitterStatus {
     private String inReplyToUserScreenName;
     private String jsonString;
 
+    private boolean isGap;
+
+    public boolean isGap() {
+        return isGap;
+    }
+
+    public void setGap(boolean isGap) {
+        this.isGap = isGap;
+    }
+
     public TwitterStatus() {
     }
 

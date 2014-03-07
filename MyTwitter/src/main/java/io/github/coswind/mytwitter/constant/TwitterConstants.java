@@ -18,6 +18,8 @@ public class TwitterConstants {
 
     public final static String DIRECT_SIGN_IN_URL = "https://api.twitter.com/sign_in";
 
+    public final static int PAGING_COUNT = 20;
+
     public static Configuration configuration;
 
     static {
